@@ -1,4 +1,4 @@
 # sistemasOperativos
 
-Link al [enunciado](https://drive.google.com/open?id=0B5mszop1eR7DQklwQm9pZXBPSGM)
+Link al [enunciado](https://docs.google.com/document/d/10EMi6DSyDrFmaDWedXM6oDfo5NUH-OSq33jhhrTlETk/edit#heading=h.gjdgxs)
 en Drive.
