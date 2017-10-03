@@ -7,4 +7,8 @@ en Drive.
 | tarea                            | encargado                    | deadline   |
 |----------------------------------|------------------------------|------------|
 | TP                               |                              | 2017-10-17 |
-|                                  |                              |            |
+| INSTALADOR                       |                              | 2017-10-17 |
+| PREPARAR                         |                              | 2017-10-17 |
+| DEMONIO                          | pabloernesto                 | 2017-10-17 |
+| VALIDADOR                        |                              | 2017-10-17 |
+| LISTADOR                         |                              | 2017-10-17 |
