@@ -1,9 +1,12 @@
 #! /bin/bash
 
+if [ ! -v DIRABUS ]; then DIRABUS=dirabus; fi
+if [ ! -v ACEPTADOS ]; then ACEPTADOS=aceptados; fi
+
+if [ ! -d $DIRABUS ]; then mkdir $DIRABUS; fi
+if [ ! -d $ACEPTADOS ]; then mkdir $ACEPTADOS; fi
+
 for (( i = 1; ; i++ )); do
-    echo $i
+    mv $DIRABUS/* $ACEPTADOS
     sleep 1
 done
-
-#if DIRABUS is not set
-    #set it to default
