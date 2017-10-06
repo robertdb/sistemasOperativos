@@ -1,12 +1,15 @@
 #! /bin/bash
 
-if [ ! -v DIRABUS ]; then DIRABUS=dirabus; fi
-if [ ! -v ACEPTADOS ]; then ACEPTADOS=aceptados; fi
+source log.sh
 
+if [ ! -v DIRABUS ]; then DIRABUS=dirabus; fi
 if [ ! -d $DIRABUS ]; then mkdir $DIRABUS; fi
+
+if [ ! -v ACEPTADOS ]; then ACEPTADOS=aceptados; fi
 if [ ! -d $ACEPTADOS ]; then mkdir $ACEPTADOS; fi
 
 for (( i = 1; ; i++ )); do
+    log $i
     mv $DIRABUS/* $ACEPTADOS
     sleep 1
 done
