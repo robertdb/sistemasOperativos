@@ -4,29 +4,77 @@ LOGFILE=preparador
 LOGS='../test/testPreparador/dirconf'
 source log.sh
 
-declare -A map    # Create an associative array
-       # Put a value into an associative array
+declare -r ejecutables="ejecutables"
+declare -r maestros="maestros"
+declare -r aceptados="aceptados"
+declare -r rechazados="rechazados"
+declare -r validados="validados"
+declare -r reportes="reportes"
+declare -r logs="logs"
+
+declare -A map
 
 while read linea
 do
-    var=$(echo "$linea" | grep --only-matching '^[^-]*')
+    if [[ -z $linea ]]; then
+      continue
+    fi
+    key=$(echo "$linea" | grep --only-matching '^[^-]*')
 
-    map[$var]=$((${map[$var]} + 1))
+    map[$key]=$((${map[$key]} + 1))
 
 done < '../test/testPreparador/config.config'
 
-if [[ ${#map[@]} != 7 ]]; then
-  echo "faltan directorios"#comentar que directorios faltan, cortar ejecucion
-fi
+declare -A mapErrors
 
+#nombrar directorios faltantes, cortar ejecucion
+if [[ ${#map[@]} -lt 7 ]]; then
+  mapErrors['dir_size']="faltan directorios"
+  echo "faltan directorios"
+  if [[ -z "${map[${ejecutables}]}" ]]; then
+    echo "No existe el directorio $ejecutables"
+    log "No existe el directorio $ejecutables";
+  fi
+  if [[ -z "${map[${maestros}]}" ]]; then echo "No existe el directorio $maestros";fi
+  if [[ -z "${map[${aceptados}]}" ]]; then echo "No existe el directorio $aceptados";fi
+  if [[ -z "${map[${rechazados}]}" ]]; then echo "No existe el directorio $rechazados";fi
+  if [[ -z "${map[${validados}]}" ]]; then echo "No existe el directorio $validados";fi
+  if [[ -z "${map[${reportes}]}" ]]; then echo "No existe el directorio $reportes";fi
+  if [[ -z "${map[${logs}]}" ]]; then echo "No existe el directorio $logs";fi
+  exit 1
+fi
 
 for i in "${!map[@]}"
 do
-  echo "key  : ${map[$i]}"
-  echo "value: ${map[$i]}"
+  case $i in
+
+    $ejecutables )
+      ;;
+    $maestros )
+      ;;
+    $aceptados )
+      ;;
+    $rechazados )
+    ;;
+    $validados )
+    ;;
+    $reportes )
+    ;;
+    $logs )
+    ;;
+    * ) mapErrors[$i]="Directorio $i inválido, verifique las rutas de configuración"
+        continue
+   ;;
+  esac
+
   if [[ ${map[$i]} -gt 1 ]]; then
-    log "error en la carga de : $i"
+    mapErrors[$i]="Directorio $i esta duplicado"
   fi
+
 done
 
-echo ${#map[@]}
+for i in "${!mapErrors[@]}"
+do
+  echo ${mapErrors[$i]}
+  log ${mapErrors[$i]}
+done
