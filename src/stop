@@ -2,4 +2,4 @@
 
 # -C find processes with specified command
 # -o "pid=" print only the process id, without headers
-kill $(ps -C "DEMONIO" -o "pid=")
+kill $(ps -C "demonio" -o "pid=")
