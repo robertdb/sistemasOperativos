@@ -18,7 +18,6 @@ function log() {
 function truncate() {
     # n es el primer argumento de truncate, o 50 por default.
     local n=${1:-50}
-    echo $n
     tmp=$(mktemp)
     tail $LOGS/$LOGFILE -n $n >tmp
     mv tmp $LOGS/$LOGFILE
