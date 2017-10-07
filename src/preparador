@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+LOGFILE=preparador
+LOGS='../test/testPreparador/dirconf'
+source log.sh
+
 declare -A map    # Create an associative array
        # Put a value into an associative array
 
@@ -21,7 +25,7 @@ do
   echo "key  : ${map[$i]}"
   echo "value: ${map[$i]}"
   if [[ ${map[$i]} -gt 1 ]]; then
-    echo "error en la carga de : $i"
+    log "error en la carga de : $i"
   fi
 done
 
