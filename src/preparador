@@ -2,15 +2,27 @@
 
 declare -A map    # Create an associative array
        # Put a value into an associative array
+
 while read linea
 do
-    var=$(echo "$linea" | grep --only-matching '^[^-]*');
-    map[$var]=0
-    echo $var
+    var=$(echo "$linea" | grep --only-matching '^[^-]*')
+
+    map[$var]=$((${map[$var]} + 1))
+
 done < '../test/testPreparador/config.config'
+
+if [[ ${#map[@]} != 7 ]]; then
+  echo "faltan directorios"#comentar que directorios faltan, cortar ejecucion
+fi
+
 
 for i in "${!map[@]}"
 do
-  echo "key  : $i"
+  echo "key  : ${map[$i]}"
   echo "value: ${map[$i]}"
+  if [[ ${map[$i]} -gt 1 ]]; then
+    echo "error en la carga de : $i"
+  fi
 done
+
+echo ${#map[@]}
