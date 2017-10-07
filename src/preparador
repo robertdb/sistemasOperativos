@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+declare -A map    # Create an associative array
+       # Put a value into an associative array
+while read linea
+do
+    var=$(echo "$linea" | grep --only-matching '^[^-]*');
+    map[$var]=0
+    echo $var
+done < '../test/testPreparador/config.config'
+
+for i in "${!map[@]}"
+do
+  echo "key  : $i"
+  echo "value: ${map[$i]}"
+done
