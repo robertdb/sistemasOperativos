@@ -1,5 +1,6 @@
 #! /bin/bash
 
+LOGFILE=demonio
 source log.sh
 
 if [ ! -v DIRABUS ]; then DIRABUS=dirabus; fi
@@ -10,6 +11,8 @@ if [ ! -d $ACEPTADOS ]; then mkdir $ACEPTADOS; fi
 
 for (( i = 1; ; i++ )); do
     log $i
+    if [ $(($i%100)) -eq 0 ]; then truncate; fi
+
     mv $DIRABUS/* $ACEPTADOS
     sleep 1
 done
