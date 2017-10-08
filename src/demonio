@@ -17,6 +17,11 @@ function rechazar() {
     log archivo rechazado: $1
 }
 
+function aceptar() {
+    mv ${1?"aceptar llamado sin argumentos"} $ACEPTADOS
+    log archivo aceptado: $1
+}
+
 for (( i = 1; ; i++ )); do
     sleep 1
 
@@ -26,6 +31,7 @@ for (( i = 1; ; i++ )); do
     if [ -z $(ls -A $DIRABUS) ]; then continue; fi
 
     for file in $DIRABUS/*; do
-        if ! [[ $file =~ [^_]+_[^_]+\.txt ]]; then rechazar $file; fi
+        if ! [[ $file =~ [^_]+_[^_]+\.txt ]]; then rechazar $file
+        else aceptar $file; fi
     done
 done
