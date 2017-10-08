@@ -26,8 +26,6 @@ source ./archivoConfig.sh
 source ./verificarPerl.sh
 source ./menu.sh
 export GRUPO
-confi ruta1 ruta2 ruta3 ruta4 ruta5 ruta6 ruta7 
-
 #Hago dirconf
 if [ ! -d "$GRUPO/dirconf" ]; then
 	echo "dirconf no creado"
@@ -44,6 +42,8 @@ if [ "$ret" == 0 ]; then
 	reparar
     else
         echo "no reparo"
+	echo "a instalar"
 	menu
+        confi "${carpetas[0]}" "${carpetas[1]}" "${carpetas[2]}" "${carpetas[3]}" "${carpetas[4]}" "${carpetas[5]}" "${carpetas[6]}"
     fi
 fi

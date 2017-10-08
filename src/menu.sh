@@ -23,7 +23,7 @@ nombrarDirectorio(){
  read opcion
  if [ "$opcion" = "s" ]; then
      echo "Ingrese nuevo directorio a partir de: $GRUPO"
-     echo "Ej: /Nuevo Directorio"
+     echo "Ej: Nuevo Directorio"
      echo "-----> $GRUPO/Nuevo Directorio"
      read directorioNuevo
      validar "$GRUPO/$directorioNuevo" $directorioNuevo $lugar
