@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /usr/bin/env bash
 
 ### verificacion de correcta informacion de conformacion de numeros 
 ### de la tarjeta
