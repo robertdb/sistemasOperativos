@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
+
+
 LOGFILE=preparador
 LOGS='../test/testPreparador/dirconf'
 source log.sh
+
+function reportar() {
+    echo $1
+    log $1
+}
 
 declare -r ejecutables="ejecutables"
 declare -r maestros="maestros"
@@ -19,7 +26,7 @@ do
     if [[ -z $linea ]]; then
       continue
     fi
-    key=$(echo "$linea" | grep --only-matching '^[^-]*')
+    key=$(reportar "$linea" | grep --only-matching '^[^-]*')
 
     map[$key]=$((${map[$key]} + 1))
 
@@ -28,21 +35,28 @@ done < '../test/testPreparador/config.config'
 declare -A mapErrors
 
 #nombrar directorios faltantes, cortar ejecucion
-if [[ ${#map[@]} -lt 7 ]]; then
-  mapErrors['dir_size']="faltan directorios"
-  echo "faltan directorios"
   if [[ -z "${map[${ejecutables}]}" ]]; then
-    echo "No existe el directorio $ejecutables"
-    log "No existe el directorio $ejecutables";
+    reportar "No existe el directorio $ejecutables"
   fi
-  if [[ -z "${map[${maestros}]}" ]]; then echo "No existe el directorio $maestros";fi
-  if [[ -z "${map[${aceptados}]}" ]]; then echo "No existe el directorio $aceptados";fi
-  if [[ -z "${map[${rechazados}]}" ]]; then echo "No existe el directorio $rechazados";fi
-  if [[ -z "${map[${validados}]}" ]]; then echo "No existe el directorio $validados";fi
-  if [[ -z "${map[${reportes}]}" ]]; then echo "No existe el directorio $reportes";fi
-  if [[ -z "${map[${logs}]}" ]]; then echo "No existe el directorio $logs";fi
-  exit 1
-fi
+  if [[ -z "${map[${maestros}]}" ]]; then
+    reportar "No existe el directorio $maestros";
+  fi
+  if [[ -z "${map[${aceptados}]}" ]]; then
+    reportar "No existe el directorio $aceptados";
+  fi
+  if [[ -z "${map[${rechazados}]}" ]]; then
+    reportar "No existe el directorio $rechazados";
+  fi
+  if [[ -z "${map[${validados}]}" ]]; then
+    reportar "No existe el directorio $validados";
+  fi
+  if [[ -z "${map[${reportes}]}" ]]; then
+    reportar "No existe el directorio $reportes";
+  fi
+  if [[ -z "${map[${logs}]}" ]]; then
+    reportar "No existe el directorio $logs";
+  fi
+
 
 for i in "${!map[@]}"
 do
@@ -75,6 +89,5 @@ done
 
 for i in "${!mapErrors[@]}"
 do
-  echo ${mapErrors[$i]}
-  log ${mapErrors[$i]}
+  reportar "${mapErrors[$i]}"
 done
