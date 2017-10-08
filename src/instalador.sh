@@ -9,38 +9,6 @@ chequearSistema () {
 reparar(){
   echo "Reparar"
 }
-menu(){
-ejecutables="$GRUPO/bin"
-maestros="$GRUPO/master"
-aceptados="$GRUPO/aceptados"
-rechazados="$GRUPO/rechazados"
-validados="$GRUPO/validados"
-reportes="$GRUPO/reportes"
-logs="$GRUPO/logs"
-echo "Seleccione una opcion para definir los directorios para la instalacion:"
-echo "1- Ejecutables"
-echo "2- Maestros"
-echo "3- Aceptados"
-echo "4- Rechazados"
-echo "5- Validados"
-echo "6- Reportes"
-echo "7- Logs"
-read opcion
-
-case $opcion in 
- 1) echo "$ejecutables";;
- 2) echo "$maestros";;
- 3) echo "$aceptados";;
- 4) echo "$rechazados";;
- 5) echo "$validados";;
- 6) echo "$reportes";;
- 7) echo "$logs";;
-esac
-
-
-}
-
-
 
 GRUPO='~/Sistemas\ operativos/TP/Grupo3'
 # Expando el ~
@@ -54,7 +22,11 @@ fi
 if [ ! -d ~/Sistemas\ operativos/TP/Grupo3/ ]; then
 	echo "no esta creado x2 "
 fi
-
+source ./archivoConfig.sh
+source ./verificarPerl.sh
+source ./menu.sh
+export GRUPO
+confi ruta1 ruta2 ruta3 ruta4 ruta5 ruta6 ruta7 
 
 #Hago dirconf
 if [ ! -d "$GRUPO/dirconf" ]; then
@@ -63,17 +35,15 @@ if [ ! -d "$GRUPO/dirconf" ]; then
 	mkdir "$GRUPO/dirconf"
 fi
 
-menu
-
 chequearSistema
 ret=$?
 echo $ret
 if [ "$ret" == 0 ]; then
-    echo "no esta instalado "
+    echo "no esta instalado el sistema "
     if [ "$1" == "-r" ]; then
 	reparar
     else
         echo "no reparo"
-
+	menu
     fi
 fi
