@@ -4,15 +4,28 @@ LOGFILE=demonio
 source log.sh
 
 if [ ! -v DIRABUS ]; then DIRABUS=dirabus; fi
-if [ ! -d $DIRABUS ]; then mkdir $DIRABUS; fi
+if [ ! -d $DIRABUS ]; then mkdir --parents $DIRABUS; fi
 
 if [ ! -v ACEPTADOS ]; then ACEPTADOS=aceptados; fi
-if [ ! -d $ACEPTADOS ]; then mkdir $ACEPTADOS; fi
+if [ ! -d $ACEPTADOS ]; then mkdir --parents $ACEPTADOS; fi
+
+if [ ! -v RECHAZADOS ]; then RECHAZADOS=rechazados; fi
+if [ ! -d $RECHAZADOS ]; then mkdir --parents $RECHAZADOS; fi
+
+function rechazar() {
+    mv ${1?"rechazar llamado sin argumentos"} $RECHAZADOS
+    log archivo rechazado: $1
+}
 
 for (( i = 1; ; i++ )); do
+    sleep 1
+
     log $i
     if [ $(($i%100)) -eq 0 ]; then truncate; fi
 
-    mv $DIRABUS/* $ACEPTADOS
-    sleep 1
+    if [ -z $(ls -A $DIRABUS) ]; then continue; fi
+
+    for file in $DIRABUS/*; do
+        if ! [[ $file =~ [^_]+_[^_]+\.txt ]]; then rechazar $file; fi
+    done
 done
