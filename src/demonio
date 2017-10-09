@@ -17,12 +17,12 @@ if [ ! -d $RECHAZADOS ]; then mkdir --parents $RECHAZADOS; fi
 # El segundo argumento es un mensaje opcional que se agrega al log.
 function rechazar() {
     mv ${1:?"rechazar llamado sin argumentos"} $RECHAZADOS
-    log archivo rechazado: $1${2:+, $2}
+    log archivo rechazado: $(basename $1)${2:+, $2}
 }
 
 function aceptar() {
     mv ${1?"aceptar llamado sin argumentos"} $ACEPTADOS
-    log archivo aceptado: $1
+    log archivo aceptado: $(basename $1)
 }
 
 function dateIsOk() {
@@ -40,33 +40,27 @@ function dateIsOk() {
     else return 1; fi
 }
 
-for (( i = 1; ; i++ )); do
-    sleep 1
+function procesarArchivo() {
+    local name=$(basename $1)
 
+    if ! [[ $name =~ [^_]+_[^_]+\.txt ]]; then
+        rechazar $1 "nombre mal formado"; return; fi
+    if ! [ -s $1 ]; then
+        rechazar $1 "vacio"; return; fi
+    if ! [[ $(file $1) =~ ASCII ]]; then
+        rechazar $1 "no es ASCII"; return; fi
+    if ( ! dateIsOk $name ); then
+        rechazar $1 "mala fecha"; return; fi
+
+    aceptar $1
+}
+
+for (( i = 1; ; i++ )); do
     log $i
     if [ $(($i%100)) -eq 0 ]; then truncate; fi
 
+    sleep 1
+
     if [ -z $(ls -A $DIRABUS) ]; then continue; fi
-
-
-    for file in $DIRABUS/*; do
-        if ! [[ $file =~ [^_]+_[^_]+\.txt ]]; then
-            rechazar $file "nombre mal formado"
-            continue
-        fi
-        if ! [ -s $file ]; then
-            rechazar $file "vacio"
-            continue
-        fi
-        if ! [[ $(file $file) =~ ASCII ]]; then
-            rechazar $file "no es ASCII"
-            continue
-        fi
-        if ( ! dateIsOk $file ); then
-            rechazar $file "mala fecha"
-            continue
-        fi
-
-        aceptar $file
-    done
+    for file in $DIRABUS/*; do procesarArchivo $file; done
 done
