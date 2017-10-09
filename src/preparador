@@ -120,11 +120,22 @@ if [[ ${#mapErrors[@]} > 0 ]]; then
 fi
 
 #
-echo "esta todo bien"
+export DIRABUS
 
-export MAESTRO=$maestro_ruta
+while [[ ! -d "$DIRABUS" ]]; do
+  read -p $'Defina el directorio de búsqueda.\neditable:\n' \
+    -ei $(pwd) DIRABUS
+done
+echo "directorio de búsqueda correcto"
+
+log "se crea la variable de ambiente DIRABUS"
+
+
+export MAESTROS=$maestro_ruta
+log "se crea la variable de ambiente MAESTROS"
 
 export EJECUTABLES=$ejecutables_ruta
+log "se crea la variable de ambiente EJECUTABLES"
 
 #find "$MAESTRO" -type f -exec chmod u=r {} +
 
