@@ -25,6 +25,21 @@ function aceptar() {
     log archivo aceptado: $1
 }
 
+function dateIsOk() {
+    local filename=${1:?"dateIsOk llamado sin argumentos"}
+    local noext=${filename%.*}
+    local date=${noext#*_}
+
+    # bash interpreta una funcion que retorna 0 como true, y otros retornos
+    # como false
+    # note que la expansion aritmetica es distinta a la expansion de comandos,
+    # y que en expansion aritmetica (( 0 )) es false, y (( 1 )) es true
+    if [[ $(date 2>&1 --date $date) =~ invalid ]]; then return 1; fi
+
+    if [[ $date < $(date "+%Y%m%d") ]]; then return 0
+    else return 1; fi
+}
+
 for (( i = 1; ; i++ )); do
     sleep 1
 
@@ -45,6 +60,10 @@ for (( i = 1; ; i++ )); do
         fi
         if ! [[ $(file $file) =~ ASCII ]]; then
             rechazar $file "no es ASCII"
+            continue
+        fi
+        if ( ! dateIsOk $file ); then
+            rechazar $file "mala fecha"
             continue
         fi
 
