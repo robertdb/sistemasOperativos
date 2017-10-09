@@ -1,9 +1,6 @@
-#!/usr/bin/env bash
-
-
 
 LOGFILE=preparador
-LOGS='../test/testPreparador/dirconf'
+LOGS='dirconf'
 source log.sh
 
 function reportar() {
@@ -21,40 +18,67 @@ declare -r logs="logs"
 
 declare -A map
 
+
 while read linea
 do
     if [[ -z $linea ]]; then
       continue
     fi
-    key=$(reportar "$linea" | grep --only-matching '^[^-]*')
+    key=$(echo "$linea" | grep --only-matching '^[^-]*')
+
+    user=$(echo "$linea" | sed 's#^[^-]*-[^-]*-\([^-]*\).*#\1#')
+
+    if [[ $key == $maestros ]]; then
+      maestro_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
+    fi
+
+    if [[ $key == $ejecutables ]]; then
+      ejecutables_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
+    fi
+
+    if [[ -z $flag ]]; then
+      flag=$user
+    fi
+
+    if [[ $flag != $user ]]; then
+      reportar "Error de usuario, tiene que ser el mismo para todas rutas"
+      exit 1
+    fi
 
     map[$key]=$((${map[$key]} + 1))
 
-done < '../test/testPreparador/config.config'
+done < 'dirconf/configuracion.conf'
 
 declare -A mapErrors
 
 #nombrar directorios faltantes, cortar ejecucion
   if [[ -z "${map[${ejecutables}]}" ]]; then
     reportar "No existe el directorio $ejecutables"
+    exit 1
   fi
   if [[ -z "${map[${maestros}]}" ]]; then
     reportar "No existe el directorio $maestros";
+    exit 1
   fi
   if [[ -z "${map[${aceptados}]}" ]]; then
     reportar "No existe el directorio $aceptados";
+    exit 1
   fi
   if [[ -z "${map[${rechazados}]}" ]]; then
     reportar "No existe el directorio $rechazados";
+    exit 1
   fi
   if [[ -z "${map[${validados}]}" ]]; then
     reportar "No existe el directorio $validados";
+    exit 1
   fi
   if [[ -z "${map[${reportes}]}" ]]; then
     reportar "No existe el directorio $reportes";
+    exit 1
   fi
   if [[ -z "${map[${logs}]}" ]]; then
     reportar "No existe el directorio $logs";
+    exit 1
   fi
 
 
@@ -87,7 +111,23 @@ do
 
 done
 
-for i in "${!mapErrors[@]}"
-do
-  reportar "${mapErrors[$i]}"
-done
+if [[ ${#mapErrors[@]} > 0 ]]; then
+  for i in "${!mapErrors[@]}"
+  do
+    reportar "${mapErrors[$i]}"
+  done
+  exit 1
+fi
+
+#
+echo "esta todo bien"
+
+export MAESTRO=$maestro_ruta
+
+export EJECUTABLES=$ejecutables_ruta
+
+#find "$MAESTRO" -type f -exec chmod u=r {} +
+
+#find "$EJECUTABLES" -type f -exec chmod u=x {} +
+
+#./star
