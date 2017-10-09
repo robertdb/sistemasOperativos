@@ -120,13 +120,15 @@ if [[ ${#mapErrors[@]} > 0 ]]; then
 fi
 
 #
+export DIRABUS
+
 while [[ ! -d "$DIRABUS" ]]; do
   read -p $'Defina el directorio de búsqueda.\neditable:\n' \
     -ei $(pwd) DIRABUS
 done
+echo "directorio de búsqueda correcto"
 
-echo $DIRABUS
-
+log "se crea la variable de ambiente DIRABUS"
 
 
 export MAESTROS=$maestro_ruta
