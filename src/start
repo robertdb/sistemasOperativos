@@ -1,6 +1,10 @@
 #! /usr/bin/env bash
 
-# -C find processes with specified command
-# -o "pid=" print only the process id, without headers
-if [ "$(ps -C "demonio" -o "pid=")" != "" ]; then exit; fi
+# Si el demonio esta corriendo, su pid esta en dirconf/pid_demonio
+if [ -f dirconf/pid_demonio ]; then cat dirconf/pid_demonio; exit; fi
+
+# Asegurarse que dirconf exista
+if [ ! -d dirconf ]; then mkdir dirconf; fi
+
 nohup 2>/dev/null ./demonio >/dev/null &
+echo $! | tee dirconf/pid_demonio
