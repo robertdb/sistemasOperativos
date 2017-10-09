@@ -1,10 +1,10 @@
-
 LOGFILE=preparador
 LOGS='dirconf'
 source log.sh
 
 function reportar() {
-    echo $1
+    echo -e "\e[1;31m$1\e[0m"
+    echo -e "\e[1;31mPara reparar la instalación corra el script './instalador.sh -r'\e[0m"
     log $1
 }
 
@@ -123,10 +123,10 @@ fi
 export DIRABUS
 
 while [[ ! -d "$DIRABUS" ]]; do
-  read -p $'Defina el directorio de búsqueda.\neditable:\n' \
+  read -p $'Defina el directorio de búsqueda.\nRuta editable:\n' \
     -ei $(pwd) DIRABUS
 done
-echo "directorio de búsqueda correcto"
+echo -e "\e[1;32mDirectorio de búsqueda creado correctamente.\e[0m"
 
 log "se crea la variable de ambiente DIRABUS"
 
