@@ -36,13 +36,18 @@ for (( i = 1; ; i++ )); do
 
     for file in $DIRABUS/*; do
         if ! [[ $file =~ [^_]+_[^_]+\.txt ]]; then
-            rechazar $file "nombre de archivo mal formado"
+            rechazar $file "nombre mal formado"
             continue
         fi
         if ! [ -s $file ]; then
-            rechazar $file "archivo vacio"
+            rechazar $file "vacio"
             continue
         fi
+        if ! [ file $file ~= ASCII ]; then
+            rechazar $file "no es ASCII"
+            continue
+        fi
+
         aceptar $file
     done
 done
