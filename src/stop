@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 
-# -C find processes with specified command
-# -o "pid=" print only the process id, without headers
-if [ "$(ps -C "demonio" -o "pid=")" == "" ]; then exit; fi
-kill $(ps -C "demonio" -o "pid=")
+if [ ! -f dirconf/pid_demonio ]; then echo "demonio no esta corriendo"; exit; fi
+
+echo "Matando demonio pid" $(<dirconf/pid_demonio)
+kill $(<dirconf/pid_demonio)
+rm dirconf/pid_demonio
