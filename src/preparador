@@ -36,6 +36,26 @@ do
       ejecutables_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
     fi
 
+    if [[ $key == $aceptados ]]; then
+      aceptados_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
+    fi
+
+    if [[ $key == $rechazados ]]; then
+      rechazados_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
+    fi
+
+    if [[ $key == $validados ]]; then
+      validados_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
+    fi
+
+    if [[ $key == $reportes ]]; then
+      reportes_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
+    fi
+
+    if [[ $key == $logs ]]; then
+      logs_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
+    fi
+
     if [[ -z $flag ]]; then
       flag=$user
     fi
@@ -124,12 +144,11 @@ export DIRABUS
 
 while [[ ! -d "$DIRABUS" ]]; do
   read -p $'Defina el directorio de búsqueda.\nRuta editable:\n' \
-    -ei $(pwd) DIRABUS
+    -ei $(pwd)/dirbus DIRABUS
 done
 echo -e "\e[1;32mDirectorio de búsqueda creado correctamente.\e[0m"
 
 log "se crea la variable de ambiente DIRABUS"
-
 
 export MAESTROS=$maestro_ruta
 log "se crea la variable de ambiente MAESTROS"
@@ -137,8 +156,24 @@ log "se crea la variable de ambiente MAESTROS"
 export EJECUTABLES=$ejecutables_ruta
 log "se crea la variable de ambiente EJECUTABLES"
 
+export ACEPTADOS=$aceptados_ruta
+log "se crea la variable de ambiente ACEPTADOS"
+
+export RECHAZADOS=$rechazados_ruta
+log "se crea la variable de ambiente RECHAZADOS"
+
+export VALIDADOS=$validados_ruta
+log "se crea la variable de ambiente VALIDADOS"
+
+export REPORTES=$reportes_ruta
+log "se crea la variable de ambiente REPORTES"
+
+export LOGS=$logs_ruta
+log "se crea la variable de ambiente LOGS"
+
+
 #find "$MAESTRO" -type f -exec chmod u=r {} +
 
 #find "$EJECUTABLES" -type f -exec chmod u=x {} +
 
-#./star
+./start_demonio
