@@ -43,7 +43,7 @@ for (( i = 1; ; i++ )); do
             rechazar $file "vacio"
             continue
         fi
-        if ! [[ file $file ~= ASCII ]]; then
+        if ! [[ $(file $file) =~ ASCII ]]; then
             rechazar $file "no es ASCII"
             continue
         fi
