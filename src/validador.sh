@@ -140,27 +140,17 @@ do
 	aux2=$(echo $fechahasta | cut -d '/' -f2);
 	aux3=$(echo $fechahasta | cut -d '/' -f3);
 	aux4=$(echo $aux3 | cut -c 1-4);
-	#fechaf=$aux4;
 	echo $aux4;
 	fechaf=$aux4$aux2$aux;
 	echo $fechaf;
-	#fechadiferencia=$(( $(date -d $fechaf +%s)- $(date -d $fechainicial +%s) )/(60*60*24) ));
-	#echo $fechadiferencia;
-	DIFERENCIA=$(( ($(date --date $fechainicial +%s) - $(date --date $fechaf +%s) )/(60*60*24) ))
+	DIFERENCIA=$(( ($(date --date $fechaf +%s) - $(date --date $fechainicial +%s) )/(60*60*24) ))
 	echo "Diferencia: $DIFERENCIA"
-	#resultado=$(echo $fechadiferencia);	
 	if [ $DIFERENCIA -ge 0 ];
 	then
 	echo "la fecha final es mayor que la inicial";
+	else
+	rechazados
 	fi
-#   startd=$(date -d "$fechainicial" +'%d/%m/%Y'); 
-#	echo "$startd";
-#	starte=$(date -d "$fechafinal" +'%d/%m/%Y'); 
-#	echo "$starte";
-	
-	
-	#diferencia=$((${fechahasta} - ${fechadesde})) # Calculamos la diferencia
-	sleep 5;
   if [[ $fechadesde =~ ^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$ ]];
   then
   echo "fecha en formato correcto dd-mm-aaaa";
