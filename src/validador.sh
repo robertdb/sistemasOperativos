@@ -6,7 +6,7 @@
 tarjetaCorrecta() {
 	es_numero='^[0-9]+$';
 if ! [[ $1 =~ $es_numero ]] ; then
-   echo "ERROR: No es un número" >&amp;2; return 1
+   echo "ERROR: No es un número"; return 1
 fi
 
 parametro=$1;
@@ -43,7 +43,7 @@ tieneInfo() {
 	if [ ! -z $1 ];
 	then
 	echo "tiene informacion la variable"
-	echo $1;
+	echo "$1";
 	sleep 1;
 	return 0;
 	fi
@@ -56,15 +56,15 @@ echo "buscar cuenta en archivo maestro cumae";
 contador=0;
 while read line;
 do
-	echo $1;
 	linea=$(echo -e "$line\n");
 	cuenta=$(echo "$linea" | cut -d ';' -f2);
 	if [ $contador -ne 0 ];
 	then
 	if [ $1 = $cuenta ];
 	then
-	echo "cuenta encontrada"
-	sleep 1
+	echo $1;
+	echo $cuenta;
+	sleep 5;
 	return 0;
 	fi
 	fi
@@ -96,19 +96,21 @@ do
   echo $fechadesde;
   echo $fechahasta;
   buscarCuenta $CUENTA;
-	if [ $? -eq 0 ]; then echo "cuenta no econtrada" 
+	if [ $? -eq 0 ]; then echo "cuenta econtrada" 
 	else 
 	rechazados 
+	sleep 5;
 	fi
 	tieneInfo $documento;
 	if [ $? -eq 0 ]; then echo "documento con informacion"
 	else 
-	rechazados 
+	rechazados; 
 	fi
 	tieneInfo $denominacion;
-	if [ $? -eq 0 ]; then echo "denominacion con informacion" 
+	if [ $? -eq 0 ]; then echo "denominacion con informacion"; 
 	else 
 	rechazados 
+	sleep 5;
 	fi
 	tarjetaCorrecta $t1;
 	if [ $? -eq 0 ]; then echo "tiene 4 digitos bien formados" 
@@ -162,7 +164,7 @@ do
   
   fi
   ((contador++))
-done < ./archivos/003_20170916.txt
+done < ./archivos/028_20170905.txt
 
 
 
