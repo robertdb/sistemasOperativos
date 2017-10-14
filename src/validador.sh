@@ -123,9 +123,9 @@ echo "rechazados";
 chequearExistenciaProcesados() {
 ACEPTADOS="aceptados";
 if [ ! -v PROCESADOS ]; then PROCESADOS=procesados; fi
-if [ ! -d ./$ACEPTADOS/$PROCESADOS ]; 
+if [ ! -d ./$PROCESADOS ]; 
 then 
-mkdir ./$ACEPTADOS/$PROCESADOS;
+mkdir ./$PROCESADOS;
 fi
 }
 tieneInfo() {
