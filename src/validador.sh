@@ -2,10 +2,6 @@
 
 source log.sh
 LOGFILE="validador.log";
-## Variables que en realidad son globales ya que las pusieron en
-## preparador pero por ahora para probar solo con mi script
-## agregue estas variables que luego hay que borrar
-## variables de nombre de los archivos de salida ok y no ok
 NOMBREARCHOK="plasticos_emitidos_001"
 NOMBREARCHNOK="plasticos_rechazados"
 
@@ -113,16 +109,10 @@ rechazados=$1;
 ####### o crearla si no existe ########################
 
 chequearExistenciaProcesados() {
-ACEPTADOS="aceptados";
 if [ ! -v PROCESADOS ]; then PROCESADOS=./aceptados/procesados; fi
 if [ ! -v ACEPTADOS ]; then ACEPTADOS=./aceptados; fi
 if [ ! -v RECHAZADOS ]; then RECHAZADOS=./aceptados/rechazados; fi
 if [ ! -v VALIDADOS ]; then VALIDADOS=./validados; fi
-
-#ACEPTADOS="./aceptados"
-#RECHAZADOS="./aceptados/rechazados"
-#PROCESADOS="./aceptados/procesados"
-#VALIDADOS="./validados"
 
 if [ ! -d $VALIDADOS ]; 
 then 
