@@ -1,26 +1,21 @@
-#! /usr/bin/env bash
+#! /usr/bin/env bash	
 
 source log.sh
-LOGFILE='validador.log';
-LOG='dirconf';
+LOGFILE="validador.log";
 ## Variables que en realidad son globales ya que las pusieron en
 ## preparador pero por ahora para probar solo con mi script
 ## agregue estas variables que luego hay que borrar
-ACEPTADOS="./aceptados"
-RECHAZADOS="./aceptados/rechazados"
-PROCESADOS="./aceptados/procesados"
-VALIDADOS="./validados"
-RECHAZADOS="./rechazados"
 ## variables de nombre de los archivos de salida ok y no ok
 NOMBREARCHOK="plasticos_emitidos_001"
 NOMBREARCHNOK="plasticos_rechazados"
+
 ### verificacion de correcta informacion de conformacion de numeros 
 ### de la tarjeta
 
 tarjetaCorrecta() {
 	es_numero='^[0-9]+$';
 if ! [[ $1 =~ $es_numero ]] ; then
-   echo "ERROR: No es un número"; return 1
+   rechazados="ERROR: TARJETA con caracteres que No son un números"; return 1
 fi
 
 parametro=$1;
@@ -34,22 +29,24 @@ fi
 	
 }
 yaseproceso(){
+	archi=$1
 	while read -r lineas
 	do
-	listadoprocesa=$1;
-	echo $listadoprocesa
-	echo $arch
-	sleep 5
-	if [ $listadoprocesa = $arch ];
+	listd=$(echo "$lineas" | tr ' ' '/')
+	listda=$(echo "$listd" | cut -d '/' -f4)
+	echo $listda
+	echo $archi
+	if [ $listda = $archi ];
 	then
-	mv $ACEPTADOS/$arch $RECHAZADOS
+	cp $ACEPTADOS/$arch $RECHAZADOS
+	echo "o";
 	return 1
-	else
-	mv $ACEPTADOS/$arch $PROCESADOS
-	return 0
 	fi	
-	done <<< $listadoprocesa
-}
+	done <<< $listadoprocesados
+	cp $ACEPTADOS/$arch $PROCESADOS
+	return 0
+	
+}	
 
 
 buscarEntidadBancaria() {
@@ -83,7 +80,6 @@ do
 	then
 		if [ $1 = $cuenta ];
 		then
-		#echo "$linea";
 		denunciada=$(echo "$linea" | cut -d ';' -f11);
 		bloqueada=$(echo "$linea" | cut -d ';' -f12);
 		contar=0;
@@ -96,9 +92,7 @@ do
 		then
 		denunciada=$(echo "$linea" | cut -d ';' -f11);
 		bloqueada=$(echo "$linea" | cut -d ';' -f12);
-		echo "misma cuenta";
 		((contar++));
-		echo $contar;
 		fi
 		done < ./aceptados/tx_tarjetas
 		
@@ -106,14 +100,12 @@ do
 	fi
 ((contador++));	
 done < ./archivos/tx_tarjetas
-#echo -n ";$denunciada;$bloqueada" | cat >> 2
 		
 }
 ##### si algun registro falta informacion o esta mal formado va ######
 #####  a ser rechazado ###############################################
 rechazados() {
 rechazados=$1;
-echo "rechazados";
 }
 
 
@@ -122,25 +114,46 @@ echo "rechazados";
 
 chequearExistenciaProcesados() {
 ACEPTADOS="aceptados";
-if [ ! -v PROCESADOS ]; then PROCESADOS=procesados; fi
-if [ ! -d ./$PROCESADOS ]; 
+if [ ! -v PROCESADOS ]; then PROCESADOS=./aceptados/procesados; fi
+if [ ! -v ACEPTADOS ]; then ACEPTADOS=./aceptados; fi
+if [ ! -v RECHAZADOS ]; then RECHAZADOS=./aceptados/rechazados; fi
+if [ ! -v VALIDADOS ]; then VALIDADOS=./validados; fi
+
+#ACEPTADOS="./aceptados"
+#RECHAZADOS="./aceptados/rechazados"
+#PROCESADOS="./aceptados/procesados"
+#VALIDADOS="./validados"
+
+if [ ! -d $VALIDADOS ]; 
+then 
+mkdir $VALIDADOS;
+fi
+
+if [ ! -d $ACEPTADOS ]; 
+then 
+mkdir $ACEPTADOS;
+fi
+
+if [ ! -d $PROCESADOS ]; 
 then 
 mkdir ./$PROCESADOS;
 fi
+if [ ! -d $RECHAZADOS ]; 
+then 
+mkdir $RECHAZADOS;
+fi
 }
 tieneInfo() {
-	if [ ! -z $1 ];
+	if [ -z $1 ];
 	then
-	echo "tiene informacion la variable"
-	echo "$1";
-	return 0;
-	fi
+	rechazados="campo sin informacion"
 	return 1;
+	fi
+	return 0;
 }	
 ### funcion que busca la cuenta del archivo tx_tarjetas en cumae####
 
 buscarCuenta(){
-echo "buscar 	cuenta en archivo maestro cumae";
 contador=0;
 while read line;
 do
@@ -150,8 +163,6 @@ do
 	then
 	if [ $1 = $cuenta ];
 	then
-	echo $1;
-	echo $cuenta;
 	if [ $2 -eq 0 ];
 	then
 	auxx=$(echo "$linea" | tr '\r' ';')
@@ -162,7 +173,6 @@ do
 	categoria=$(echo "$linea" | cut -d ';' -f6);
 	limite=$(echo "$linea" | cut -d ';' -f7);
 	entidad=$(echo "$linea" | cut -d ';' -f1);	
-#	echo -n "$estado" | cat >> 2;
 	fi
 	return 0;
 	fi
@@ -174,16 +184,20 @@ return 1;
 chequearExistenciaProcesados
 listado=$(ls ./aceptados/*.txt);
 listadoprocesados=$(ls ./aceptados/procesados/*.txt)
+echo "PROCESANDO..."
+
 while read -r lin
 do
 contador=0;
-arch=$(echo "$lin" | cut -d '/' -f3);
-echo $archivo;
-log "archivo procesado $archivo" 
+cuentaregistros=0;
+contadoraceptados=0;
+contadorrechazados=0;
+arch=$(echo "$lin" | cut -d '/' -f3)
+log "procesando $arch"
+yaseproceso $arch
 while read line;
 
 do 
-#yaseproceso $listadoprocesados $arch
 if [ $? -eq 1 ];
 then
 	continue
@@ -199,50 +213,40 @@ fi
   t4=$(echo "$LINEA" | cut -d ';' -f7);
   fechadesde=$(echo "$LINEA" | cut -d ';' -f8);
   fechahasta=$(echo "$LINEA" | cut -d ';' -f9);
-  echo $contador;
   if [ $contador -ne 0 ]; then
-  echo $CUENTA;
-  echo $fechadesde;
-  echo $fechahasta;
+  ((cuentaregistros++))
   buscarCuenta $CUENTA 1;
-	if [ $? -eq 0 ]; then echo "cuenta econtrada" 
-	else 
+	if [ $? -eq 1 ]; then 
 	rechazados "ERROR: Cuenta no encontrada" 
 	let aceptado=1;
 	fi
 	tieneInfo $documento;
-	if [ $? -eq 0 ]; then echo "documento con informacion"
-	else 
+	if [ $? -eq 1 ]; then 
 	rechazados "ERROR: campo documento sin informacion" 
 	let aceptado=1;
 	fi
 	tieneInfo $denominacion;
-	if [ $? -eq 0 ]; then echo "denominacion con informacion"; 
-	else 
+	if [ $? -eq 1 ]; then 
 	rechazados "ERROR: campo denominacion sin informacion"
 	let aceptado=1;
 	fi
 	tarjetaCorrecta $t1;
-	if [ $? -eq 0 ]; then echo "tiene 4 digitos bien formados" 
-	else 
+	if [ $? -eq 1 ]; then  
 	rechazados "ERROR: cantidad de digitos incorrecta"
 	let aceptado=1;
-	fi
+	fi	
 	tarjetaCorrecta $t2;
-	if [ $? -eq 0 ]; then echo "tiene 4 digitos bien formados" 
-	else 
+	if [ $? -eq 1 ]; then  
 	rechazados "ERROR: cantidad de digitos incorrecta"
 	let aceptado=1;
-	fi
+	fi	
 	tarjetaCorrecta $t3;
-	if [ $? -eq 0 ]; then echo "tiene 4 digitos bien formados" 
-	else 
+	if [ $? -eq 1 ]; then 
 	rechazados "ERROR: cantidad de digitos incorrecta"
 	let aceptado=1;
 	fi
 	tarjetaCorrecta $t4;
-	if [ $? -eq 0 ]; then echo "tiene 4 digitos bien formados" 
-	else 
+	if [ $? -eq 1 ]; then
 	rechazados "ERROR: cantidad de digitos incorrecta"
 	let aceptado=1;
 	fi
@@ -251,59 +255,63 @@ fi
 	aux3=$(echo $fechadesde | cut -d '/' -f3);
 	
 	fechainicial=$aux3$aux2$aux;
-	echo $fechainicial;
 	aux=$(echo $fechahasta | cut -d '/' -f1);
 	aux2=$(echo $fechahasta | cut -d '/' -f2);
 	aux3=$(echo $fechahasta | cut -d '/' -f3);
 	aux4=$(echo $aux3 | cut -c 1-4);
-	echo $aux4;
 	fechaf=$aux4$aux2$aux;
-	echo $fechaf;
-	DIFERENCIA=$(( ($(date --date $fechaf +%s) - $(date --date $fechainicial +%s) )/(60*60*24) ))
-	echo "Diferencia: $DIFERENCIA"
-	if [ $DIFERENCIA -ge 0 ];
-	then
-	echo "la fecha final es mayor que la inicial";
-	else
-	rechazados "ERROR: la fecha inicial es mayor que la final"
-	let aceptado=1;
-	fi
-  if [[ $fechadesde =~ ^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$ ]];
+  if [[ ! $fechadesde =~ ^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$ ]];
   then
-  echo "fecha en formato correcto dd-mm-aaaa";
-  else
   rechazados "ERROR: fecha con formato incorrecto"
   let aceptado=1;
   fi
   fechahasta="$aux/$aux2/$aux4";
   if [[ $fechahasta =~ ^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$ ]];
   then
-  echo "fecha en formato correcto dd-mm-aaaa";
+  	DIFERENCIA=$(( ($(date --date $fechaf +%s) - $(date --date $fechainicial +%s) )/(60*60*24) ))
+	if [ $DIFERENCIA -lt 0 ];
+	then
+	rechazados "ERROR: la fecha inicial es mayor que la final"
+	let aceptado=1;
+	fi
+
   else
   rechazados "ERROR: fecha con formato incorrecto"
   let aceptado=1;
   fi
+
   nombredeinput="$arch";
   ## si el registro es aceptado se graba la salidaOk
   if [ $aceptado -eq 0 ];
   then
-  echo "entro";
-  echo "cuenta es: $CUENTA";
   buscarCuenta $CUENTA 0
   grabarDatosDenunciadaBloqueada $CUENTA
-  echo "entidad a buscar: $entidad";
   buscarEntidadBancaria $entidad	
+  ((contadoraceptados++))
   echo -n "$nombredeinput;$CUENTA;$estado;$denunciada;$bloqueada" | cat >> $VALIDADOS/$NOMBREARCHOK  
   echo -n "; ; ;VALIDADOR;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $VALIDADOS/$NOMBREARCHOK 
   echo ";$doc;$den;$alta;$categoria;$limite;$entidad;$alias" | cat >> $VALIDADOS/$NOMBREARCHOK;	
+  log "registro nº $cuentaregistros: aceptado,"
   else
+  ((contadorrechazados++))
   ### si el registro no fue aceptado se graba la salidaNoOk
   echo "$nombredeinput;$rechazados;$CUENTA;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $RECHAZADOS/$NOMBREARCHNOK
+  log "registro nº $cuentaregistros: error! $rechazados,"
   fi
   fi	
   ((contador++))
-  echo $archivo;
 done < $lin;
-
+if [ $aceptado -eq 0 ]; then
+((contador++))
+log "total de registros leidos: $cuentaregistros"
+log "total de registros aceptados $contadoraceptados"
+log "archivo procesado $nombredeinput"
+else 
+log "total de registros rechazados $contadorrechazados"
+log "archivo rechazado $nombredeinput $rechazados" 
+fi
+rm $ACEPTADOS/$arch
 done <<<"$listado"
+echo "FINALIZADO EL PROCESO"
 
+	
