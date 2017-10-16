@@ -172,8 +172,8 @@ export LOGS=$logs_ruta
 log "se crea la variable de ambiente LOGS"
 
 
-#find "$MAESTRO" -type f -exec chmod u=r {} +
+find "$MAESTRO" -type f -exec chmod u=r {} +
 
-#find "$EJECUTABLES" -type f -exec chmod u=x {} +
+find "$EJECUTABLES" -type f -exec chmod u=x {} +
 
 ./start_demonio
