@@ -28,10 +28,18 @@ function aceptar() {
 function procesarArchivo() {
     local name=$(basename $1)
 
-    if ! [[ $name =~ [^_]+_[^_]+\.txt ]]; then
-        rechazar $1 "nombre mal formado"; return; fi
     if ! [ -s $1 ]; then
         rechazar $1 "vacio"; return; fi
+
+    if ! [[ $name =~ [^_]+_[^_]+\.txt ]]; then
+        rechazar $1 "nombre mal formado"; return; fi
+    local matching_entities=$( \
+        tail --lines=+2 $MAESTROS/bamae \
+        | cut --fields=1 --delimiter=\; \
+        | grep "${name%_*}" \
+    )
+    if [[ $matching_entities == "" ]]; then
+        rechazar $1 "entidad no reconocida"; return; fi
 
     # eliminar la extension y todo lo que este a la izquierda del _ (inclusive)
     local date=${${name%.*}#*_}
