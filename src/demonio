@@ -3,6 +3,8 @@
 LOGFILE=demonio
 source log.sh
 
+source mv.sh
+
 if [ ! -v DIRABUS ]; then DIRABUS=dirabus; fi
 if [ ! -d $DIRABUS ]; then mkdir --parents $DIRABUS; fi
 
@@ -16,12 +18,12 @@ if [ ! -d $RECHAZADOS ]; then mkdir --parents $RECHAZADOS; fi
 #
 # El segundo argumento es un mensaje opcional que se agrega al log.
 function rechazar() {
-    mv ${1:?"rechazar llamado sin argumentos"} $RECHAZADOS
+    _mv $RECHAZADOS ${1:?"rechazar llamado sin argumentos"}
     log archivo rechazado: $(basename $1)${2:+, $2}
 }
 
 function aceptar() {
-    mv ${1?"aceptar llamado sin argumentos"} $ACEPTADOS
+    _mv $ACEPTADOS ${1?"aceptar llamado sin argumentos"}
     log archivo aceptado: $(basename $1)
 }
 
