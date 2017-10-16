@@ -30,8 +30,6 @@ yaseproceso(){
 	do
 	listd=$(echo "$lineas" | tr ' ' '/')
 	listda=$(echo "$listd" | cut -d '/' -f4)
-	echo $listda
-	echo $archi
 	if [ $listda = $archi ];
 	then
 	cp ./$ACEPTADOS/$arch ./$ACEPTADOS/$RECHAZADOS
@@ -67,36 +65,33 @@ IFS=$old_IFS;
 ## su campo de denunciada y bloqueada ###############################
 grabarDatosDenunciadaBloqueada() {
 contador=0;
-while read line;
+contar=0;
+encontro=0;
+#oldIFS=$IFS;
+#IFS=$'\n';
+for linea in $(cat ./aceptados/tx_tarjetas)
 do
-	linea=$(echo -e "$line\n");
+	#linea=$(echo -e "$line\n");
 	cuenta=$(echo "$linea" | cut -d ';' -f2);
-	if [ $contador -ne 0 ];
+	if [ $contador -gt 0 ];
 	then
 		if [ $1 = $cuenta ];
 		then
 		denunciada=$(echo "$linea" | cut -d ';' -f11);
 		bloqueada=$(echo "$linea" | cut -d ';' -f12);
-		contar=0;
-		while read line;
-		do
-		
-		linea=$(echo -e "$line\n");
-		cuenta=$(echo "$linea" | cut -d ';' -f2);
-		if [ $1 = $cuenta ];
-		then
-		denunciada=$(echo "$linea" | cut -d ';' -f11);
-		bloqueada=$(echo "$linea" | cut -d ';' -f12);
-		((contar++));
-		fi
-		done < ./aceptados/tx_tarjetas
-		
+		VIEJA=$(echo "$linea" | cut -d ';' -f13);
+		contar=$contador
+		encontro=1;
+		((contar++))
 	fi
 	fi
-((contador++));	
-done < ./archivos/tx_tarjetas
-		
-}
+((contador++));
+if [ $encontro -eq 1 ]; then	
+if [ $contador -gt $contar ]; then break; fi
+fi
+done 
+			
+}	
 ##### si algun registro falta informacion o esta mal formado va ######
 #####  a ser rechazado ###############################################
 rechazados() {
@@ -181,7 +176,6 @@ listadoprocesados=$(ls ./aceptados/procesados/*.txt)
 else
 listadoprocesados="d";
 fi
-sleep 5
 contador=0;
 cuentaregistros=0;
 contadoraceptados=0;
@@ -193,8 +187,10 @@ if [ $? -eq 1 ];
 then
 	continue;
 fi
-
-while read line;
+echo "PROCESANDO $arch"
+oldIFS=$IFS;
+IFS=$'\n';
+for line in $(cat $lin)
 
 do 
   let aceptado=0;
@@ -283,19 +279,25 @@ do
   grabarDatosDenunciadaBloqueada $CUENTA
   buscarEntidadBancaria $entidad	
   ((contadoraceptados++))
-  echo -n "$nombredeinput;$CUENTA;$estado;$denunciada;$bloqueada" | cat >> $VALIDADOS/$NOMBREARCHOK  
-  echo -n "; ; ; ;VALIDADOR;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $VALIDADOS/$NOMBREARCHOK 
+  if [ $VIEJA = Entregada ]; then flag=1 ;
+  else
+  if [ $VIEJA = Rechazada ]; then flag=0 ;
+  else flag=2;
+  fi
+  fi
+  echo -n "$nombredeinput;$CUENTA;$estado;$flag;$denunciada;$bloqueada" | cat >> $VALIDADOS/$NOMBREARCHOK  
+  echo -n "; ; ;VALIDADOR;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $VALIDADOS/$NOMBREARCHOK 
   echo ";$doc;$den;$alta;$categoria;$limite;$entidad;$alias" | cat >> $VALIDADOS/$NOMBREARCHOK;	
   log "registro nº $cuentaregistros: aceptado,"
   else
   ((contadorrechazados++))
   ### si el registro no fue aceptado se graba la salidaNoOk
-  echo "$nombredeinput;$rechazados;$CUENTA;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $RECHAZADOS/$NOMBREARCHNOK
+  echo "$nombredeinput;$rechazados;$CUENTA;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $ACEPTADOS/$RECHAZADOS/$NOMBREARCHNOK
   log "registro nº $cuentaregistros: error! $rechazados,"
   fi
   fi	
   ((contador++))
-done < $lin;
+done 
 if [ $aceptado -eq 0 ]; then
 ((contador++))
 log "total de registros leidos: $cuentaregistros"
