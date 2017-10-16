@@ -2,8 +2,8 @@
 
 source log.sh
 LOGFILE="validador.log";
-NOMBREARCHOK="plasticos_emitidos_001"
-NOMBREARCHNOK="plasticos_rechazados"
+NOMBREARCHOK="plasticos_emitidos_001.txt"
+NOMBREARCHNOK="plasticos_rechazados.txt"
 
 ### verificacion de correcta informacion de conformacion de numeros 
 ### de la tarjeta
@@ -34,12 +34,11 @@ yaseproceso(){
 	echo $archi
 	if [ $listda = $archi ];
 	then
-	cp $ACEPTADOS/$arch $RECHAZADOS
-	echo "o";
+	cp ./$ACEPTADOS/$arch ./$ACEPTADOS/$RECHAZADOS
 	return 1
 	fi	
 	done <<< $listadoprocesados
-	cp $ACEPTADOS/$arch $PROCESADOS
+	cp ./$ACEPTADOS/$arch ./$ACEPTADOS/$PROCESADOS
 	return 0
 	
 }	
@@ -109,28 +108,28 @@ rechazados=$1;
 ####### o crearla si no existe ########################
 
 chequearExistenciaProcesados() {
-if [ ! -v PROCESADOS ]; then PROCESADOS=./aceptados/procesados; fi
-if [ ! -v ACEPTADOS ]; then ACEPTADOS=./aceptados; fi
-if [ ! -v RECHAZADOS ]; then RECHAZADOS=./aceptados/rechazados; fi
-if [ ! -v VALIDADOS ]; then VALIDADOS=./validados; fi
+if [ ! -v PROCESADOS ]; then PROCESADOS=procesados; fi
+if [ ! -v ACEPTADOS ]; then ACEPTADOS=aceptados; fi
+if [ ! -v RECHAZADOS ]; then RECHAZADOS=rechazados; fi
+if [ ! -v VALIDADOS ]; then VALIDADOS=validados; fi
 
 if [ ! -d $VALIDADOS ]; 
 then 
-mkdir $VALIDADOS;
+mkdir ./$VALIDADOS;
 fi
 
 if [ ! -d $ACEPTADOS ]; 
 then 
-mkdir $ACEPTADOS;
+mkdir ./$ACEPTADOS;
 fi
 
-if [ ! -d $PROCESADOS ]; 
+if [ ! -d ./$ACEPTADOS/$PROCESADOS ]; 
 then 
-mkdir ./$PROCESADOS;
+mkdir ./$ACEPTADOS/$PROCESADOS;
 fi
-if [ ! -d $RECHAZADOS ]; 
+if [ ! -d ./$ACEPTADOS/$RECHAZADOS ]; 
 then 
-mkdir $RECHAZADOS;
+mkdir ./$ACEPTADOS/$RECHAZADOS;
 fi
 }
 tieneInfo() {
@@ -173,11 +172,16 @@ return 1;
 }	
 chequearExistenciaProcesados
 listado=$(ls ./aceptados/*.txt);
-listadoprocesados=$(ls ./aceptados/procesados/*.txt)
 echo "PROCESANDO..."
 
 while read -r lin
 do
+if [ "$(ls -A ./$ACEPTADOS/$PROCESADOS)" ]; then
+listadoprocesados=$(ls ./aceptados/procesados/*.txt)
+else
+listadoprocesados="d";
+fi
+sleep 5
 contador=0;
 cuentaregistros=0;
 contadoraceptados=0;
@@ -185,13 +189,14 @@ contadorrechazados=0;
 arch=$(echo "$lin" | cut -d '/' -f3)
 log "procesando $arch"
 yaseproceso $arch
+if [ $? -eq 1 ];
+then
+	continue;
+fi
+
 while read line;
 
 do 
-if [ $? -eq 1 ];
-then
-	continue
-fi
   let aceptado=0;
   LINEA=$(echo -e "$line\n");
   CUENTA=$(echo "$LINEA" | cut -d ';' -f1);
@@ -279,7 +284,7 @@ fi
   buscarEntidadBancaria $entidad	
   ((contadoraceptados++))
   echo -n "$nombredeinput;$CUENTA;$estado;$denunciada;$bloqueada" | cat >> $VALIDADOS/$NOMBREARCHOK  
-  echo -n "; ; ;VALIDADOR;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $VALIDADOS/$NOMBREARCHOK 
+  echo -n "; ; ; ;VALIDADOR;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $VALIDADOS/$NOMBREARCHOK 
   echo ";$doc;$den;$alta;$categoria;$limite;$entidad;$alias" | cat >> $VALIDADOS/$NOMBREARCHOK;	
   log "registro nº $cuentaregistros: aceptado,"
   else
