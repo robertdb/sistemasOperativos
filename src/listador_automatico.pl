@@ -72,12 +72,12 @@ while ($row=<ENTRADA>){
 	else{
 		if( $list[4] eq "CTX"){
 			#print "estado de la cuenta: $list[4]\n";
-			$cond_dist = "NO DISTRIBUIR, la cuenta es contenciosa";
+			$cond_dist = "NO DISTRIBUIR, la cuenta es CONTENCIOSA";
 		}
 		else{
 			if( $list[4] eq "JUD"){
 				#print "estado de la cuenta: $list[4]\n";
-				$cond_dist = "NO DISTRIBUIR, la cuenta es judicial";
+				$cond_dist = "NO DISTRIBUIR, la cuenta es JUDICIAL";
 			}
 			else{
 				# estado bloqueada: condicion 4
