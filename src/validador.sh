@@ -48,7 +48,7 @@ return
 yaseproceso(){
 	archi=$1
 unset lineas
-for lineas in $(cat <<< $listadoprocesados)
+for lineas in ./$ACEPTADOS/$PROCESADOS/*.txt
 do
 
 	listd=$(echo "$lineas" | tr ' ' '/')
