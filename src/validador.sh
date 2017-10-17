@@ -2,7 +2,7 @@
 
 source log.sh
 LOGFILE="validador.log";
-NOMBREARCHOK="plasticos_emitidos_001.txt"
+NOMBREARCHOK="plasticos_emitidos_sec_001.txt"
 NOMBREARCHNOK="plasticos_rechazados.txt"
 
 ### verificacion de correcta informacion de conformacion de numeros 
@@ -24,8 +24,30 @@ return 1;
 fi
 	
 }
+darnombrealasalida(){
+	if [ "$(ls -A ./validados/*.txt)" ]; then
+	vali=$(ls ./validados/*.txt)
+for li in $(cat <<< $vali)
+do
+	listd=$(echo "$li" | tr ' ' '/')
+	listda=$(echo "$listd" | cut -d '/' -f3)
+done
+else
+	return
+
+fi
+final=${listda: -7}
+fin=${final: 0:3}
+fii=$(printf %03d $(($fin+1)))
+NOMBREARCHOK="plasticos_emitidos_sec_";
+NOMBREARCHOK+=$fii;
+NOMBREARCHOK+=".txt"
+return
+}	
+
 yaseproceso(){
 	archi=$1
+unset lineas
 for lineas in $(cat <<< $listadoprocesados)
 do
 
@@ -167,6 +189,7 @@ done < ./archivos/cumae
 return 1;
 }	
 chequearExistenciaProcesados
+darnombrealasalida 
 if [ "$(ls -A ./$ACEPTADOS/*.txt)" ]; then
 listadoaceptados=1;
 listado=$(ls ./$ACEPTADOS/*.txt);
