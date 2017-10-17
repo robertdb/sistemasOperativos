@@ -26,8 +26,9 @@ fi
 }
 yaseproceso(){
 	archi=$1
-	while read -r lineas
-	do
+for lineas in $(cat <<< $listadoprocesados)
+do
+
 	listd=$(echo "$lineas" | tr ' ' '/')
 	listda=$(echo "$listd" | cut -d '/' -f4)
 	if [ $listda = $archi ];
@@ -35,7 +36,7 @@ yaseproceso(){
 	cp ./$ACEPTADOS/$arch ./$ACEPTADOS/$RECHAZADOS
 	return 1
 	fi	
-	done <<< $listadoprocesados
+	done
 	cp ./$ACEPTADOS/$arch ./$ACEPTADOS/$PROCESADOS
 	return 0
 	
@@ -166,15 +167,21 @@ done < ./archivos/cumae
 return 1;
 }	
 chequearExistenciaProcesados
-listado=$(ls ./aceptados/*.txt);
+if [ "$(ls -A ./$ACEPTADOS/*.txt)" ]; then
+listadoaceptados=1;
+listado=$(ls ./$ACEPTADOS/*.txt);
+else
+listadoaceptados=0;	
+fi
+
 echo "PROCESANDO..."
 
 while read -r lin
 do
 if [ "$(ls -A ./$ACEPTADOS/$PROCESADOS)" ]; then
-listadoprocesados=$(ls ./aceptados/procesados/*.txt)
+listadoprocesados=$(ls ./$ACEPTADOS/$PROCESADOS/*.txt)
 else
-listadoprocesados="d";
+listadoprocesados="d";	
 fi
 contador=0;
 cuentaregistros=0;
@@ -182,9 +189,15 @@ contadoraceptados=0;
 contadorrechazados=0;
 arch=$(echo "$lin" | cut -d '/' -f3)
 log "procesando $arch"
-yaseproceso $arch
+if [ $listadoaceptados -eq 1 ]; then
+yaseproceso $arch $listadoprocesados
+else
+echo "PROCESO FINALIZADO"
+exit
+fi
 if [ $? -eq 1 ];
 then
+	mv $ACEPTADOS/$archi $ACEPTADOS/$RECHAZADOS
 	continue;
 fi
 echo "PROCESANDO $arch"
