@@ -22,3 +22,4 @@ do
  echo "${IDENTIFICADOR[$i]}-"${rutas[$i]}"-$usuario-$fecha" >> "$GRUPO/dirconf/configuracion.conf"
 done
 }
+
