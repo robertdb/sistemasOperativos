@@ -1,7 +1,6 @@
 #! /usr/bin/env bash
 
-if [ ! -f dirconf/pid_demonio ]; then echo "demonio no esta corriendo"; exit; fi
+if [ ! -v PID_DEMONIO ]; then echo "demonio no esta corriendo"; exit; fi
 
-echo "Matando demonio pid" $(<dirconf/pid_demonio)
-kill $(<dirconf/pid_demonio)
-rm dirconf/pid_demonio
+echo "Matando demonio pid" $PID_DEMONIO
+kill $PID_DEMONIO
