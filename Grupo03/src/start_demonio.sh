@@ -1,10 +1,8 @@
 #! /usr/bin/env bash
 export DIRABUS MAESTROS EJECUTABLES ACEPTADOS RECHAZADOS VALIDADOS REPORTES LOGS
-# Si el demonio esta corriendo, su pid esta en dirconf/pid_demonio
-if [ -f dirconf/pid_demonio ]; then cat dirconf/pid_demonio; exit; fi
 
-# Asegurarse que dirconf exista
-if [ ! -d dirconf ]; then mkdir dirconf; fi
+# Si el demonio esta corriendo, su pid esta en PID_DEMONIO
+if [ -v PID_DEMONIO ]; then echo $PID_DEMONIO; exit; fi
 
-nohup 2>/dev/null ./demonio.sh >/dev/null &
-echo $! | tee dirconf/pid_demonio
+./demonio.sh &
+echo $!
