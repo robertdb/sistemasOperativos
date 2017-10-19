@@ -2,6 +2,8 @@ LOGFILE=preparador
 LOGS='dirconf'
 source log.sh
 
+GRUPO=$(pwd | sed "s-\(.*Grupo03\).*-\1-")
+
 function reportar() {
     echo -e "\e[1;31m$1\e[0m"
     echo -e "\e[1;31mPara reparar la instalación corra el script './instalador.sh -r'\e[0m"
@@ -67,7 +69,7 @@ do
 
     map[$key]=$((${map[$key]} + 1))
 
-done < 'dirconf/configuracion.conf'
+done < "$GRUPO/dirconf/configuracion.conf"
 
 declare -A mapErrors
 
@@ -139,13 +141,10 @@ if [[ ${#mapErrors[@]} > 0 ]]; then
   exit 1
 fi
 
-#
 export DIRABUS
+read -p $'Defina el directorio de búsqueda: Grupo03/' -ei dirabus DIRABUS
+DIRABUS=$GRUPO/$DIRABUS
 
-while [[ ! -d "$DIRABUS" ]]; do
-  read -p $'Defina el directorio de búsqueda.\nRuta editable:\n' \
-    -ei $(pwd)/dirbus DIRABUS
-done
 echo -e "\e[1;32mDirectorio de búsqueda creado correctamente.\e[0m"
 
 log "se crea la variable de ambiente DIRABUS"
@@ -167,10 +166,8 @@ log "se crea la variable de ambiente VALIDADOS"
 
 export REPORTES=$reportes_ruta
 log "se crea la variable de ambiente REPORTES"
-
 export LOGS=$logs_ruta
 log "se crea la variable de ambiente LOGS"
-
 
 find "$MAESTRO" -type f -exec chmod u+r {} +
 find "$EJECUTABLES" -type f -exec chmod u+x {} +
