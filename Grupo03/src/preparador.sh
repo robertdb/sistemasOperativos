@@ -1,5 +1,4 @@
 LOGFILE=preparador
-LOGS='dirconf'
 source log.sh
 
 GRUPO=$(pwd | sed "s-\(.*Grupo03\).*-\1-")
