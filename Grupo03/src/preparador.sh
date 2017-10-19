@@ -171,4 +171,4 @@ log "se crea la variable de ambiente LOGS"
 find "$MAESTRO" -type f -exec chmod u+r {} +
 find "$EJECUTABLES" -type f -exec chmod u+x {} +
 
-./start_demonio.sh
+export PID_DEMONIO=./start_demonio.sh
