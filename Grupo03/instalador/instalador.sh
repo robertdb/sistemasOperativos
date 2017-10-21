@@ -41,21 +41,21 @@ reparar(){
 }
 
 mover(){
- textos=$(find "$GRUPO/archivos" -type f)
+    textos=$(find "$GRUPO/archivos" -type f)
 
- while read -r line
- do
-    cp "$line" "${carpetas[1]}" 2>/dev/null
-    log "-$usuario-Instalador-INF-Mover $line a: ${carpetas[1]}"
- done <<<"$textos"
+    while read -r line
+    do
+        cp "$line" "${carpetas[1]}" 2>/dev/null
+        log "-$usuario-Instalador-INF-Mover $line a: ${carpetas[1]}"
+    done <<<"$textos"
 
 
- ejecutables=$(find "$GRUPO/src" -type f -iname "*.sh" -o -iname "*.pl")
- while read -r line
- do
-   cp "$line" "${carpetas[0]}" 2>/dev/null
-    log "-$usuario-Instalador-INF-Mover $line a: ${carpetas[0]}"
- done <<<"$ejecutables"
+    ejecutables=$(find "$GRUPO/src" -type f -iname "*.sh" -o -iname "*.pl")
+    while read -r line
+    do
+        cp "$line" "${carpetas[0]}" 2>/dev/null
+        log "-$usuario-Instalador-INF-Mover $line a: ${carpetas[0]}"
+    done <<<"$ejecutables"
 }
 
 instalacion(){
