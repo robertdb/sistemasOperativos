@@ -69,7 +69,7 @@ buscarEntidadBancaria() {
 contador=0;
 oldIFS=$IFS;
 IFS=$'\n';
-for linea in $(cat ./aceptados/bamae)
+for linea in $(cat ./$MAESTROS/bamae)
 do
 	enti=$(echo "$linea" | cut -d ';' -f1);
 	if [ $contador -ne 0 ];
@@ -92,7 +92,7 @@ contar=0;
 encontro=0;
 #oldIFS=$IFS;
 #IFS=$'\n';
-for linea in $(cat ./aceptados/tx_tarjetas)
+for linea in $(cat ./$MAESTROS/tx_tarjetas)
 do
 	#linea=$(echo -e "$line\n");
 	cuenta=$(echo "$linea" | cut -d ';' -f2);
@@ -130,7 +130,7 @@ if [ ! -v PROCESADOS ]; then PROCESADOS=procesados; fi
 if [ ! -v ACEPTADOS ]; then ACEPTADOS=aceptados; fi
 if [ ! -v RECHAZADOS ]; then RECHAZADOS=rechazados; fi
 if [ ! -v VALIDADOS ]; then VALIDADOS=validados; fi
-
+if [ ! -v MAESTROS ]; then MAESTROS=maestros; fi
 if [ ! -d $VALIDADOS ]; 
 then 
 mkdir ./$VALIDADOS;
@@ -185,7 +185,7 @@ do
 	fi
 	fi
 	((contador++))
-done < ./archivos/cumae
+done < ./$MAESTROS/cumae
 return 1;
 }	
 chequearExistenciaProcesados
@@ -198,7 +198,7 @@ listadoaceptados=0;
 fi
 
 echo "PROCESANDO..."
-
+cuentaarchacept=0;
 while read -r lin
 do
 if [ "$(ls -A ./$ACEPTADOS/$PROCESADOS)" ]; then
@@ -336,6 +336,7 @@ do
 done 
 if [ $aceptado -eq 0 ]; then
 ((contador++))
+((cuentaarchacept++))
 log "total de registros leidos: $cuentaregistros"
 log "total de registros aceptados $contadoraceptados"
 log "archivo procesado $nombredeinput"
@@ -343,8 +344,13 @@ else
 log "total de registros rechazados $contadorrechazados"
 log "archivo rechazado $nombredeinput $rechazados" 
 fi
-rm $ACEPTADOS/$arch
+rm ./$ACEPTADOS/$arch
 done <<<"$listado"
 echo "FINALIZADO EL PROCESO"
-
+if [ $cuentaarchacept -gt 0 ]; then
+log "Se debe llamar al listador automatico"
+perl ./listador_automatico.pl
+else
+log "No se debe llamar al listador automatico"
+fi
 	
