@@ -6,7 +6,7 @@ chequearSistema () {
 #retorna 0 si no esta instalado
  if [ -e "$GRUPO/dirconf/configuracion.conf" ]; then
     return 1
- else 
+ else
    return 0
  fi
 }
@@ -26,38 +26,36 @@ reparar(){
   carpetasACrear=$(cut -d- -f 2 "$GRUPO/dirconf/configuracion.conf")
   contador=0
   while read -r line
-  do 
+  do
 #   echo "$line"
    carpetas[$contador]="$line"
     if [ ! -d "$line" ]; then
-	mensaje "reparacion de carpeta $line"
+    mensaje "reparacion de carpeta $line"
 #lo creo
        log "-$usuario-Instalador-INF-Reparacion de carpeta $line"
-	mkdir "$line"
-     fi   
+    mkdir "$line"
+     fi
    contador+=1
   done <<<"$carpetasACrear"
   mover
 }
 
 mover(){
- textos=$(find "$GRUPO/src/archivos" -type f -name "*.txt" -o -name "*mae" -o -name "tx_tarjetas") 
+    textos=$(find "$GRUPO/archivos" -type f)
 
- while read -r line
- do 
-#   echo "$line"
-   cp "$line" "${carpetas[1]}" 2>/dev/null
-    log "-$usuario-Instalador-INF-Mover $line a: ${carpetas[1]}"
- done <<<"$textos"
+    while read -r line
+    do
+        cp "$line" "${carpetas[1]}" 2>/dev/null
+        log "-$usuario-Instalador-INF-Mover $line a: ${carpetas[1]}"
+    done <<<"$textos"
 
-  
- ejecutables=$(find "$GRUPO/src" -type f -iname "*.sh" -o -iname "*.pl")
- while read -r line
- do 
-#   echo "$line"
-   cp "$line" "${carpetas[0]}" 2>/dev/null
-    log "-$usuario-Instalador-INF-Mover $line a: ${carpetas[0]}"
- done <<<"$ejecutables"
+
+    ejecutables=$(find "$GRUPO/src" -type f -iname "*.sh" -o -iname "*.pl")
+    while read -r line
+    do
+        cp "$line" "${carpetas[0]}" 2>/dev/null
+        log "-$usuario-Instalador-INF-Mover $line a: ${carpetas[0]}"
+    done <<<"$ejecutables"
 }
 
 instalacion(){
@@ -87,19 +85,19 @@ desinstalar(){
   carpetasABorrar=$(cut -d- -f 2 "$GRUPO/dirconf/configuracion.conf")
   contador=0
   while read -r line
-  do 
+  do
 #   echo "$line"
 #   carpetas[$contador]="$line"
     if [ -d "$line" ]; then
-	mensaje "borrar carpeta $line"
+    mensaje "borrar carpeta $line"
 #lo creo
        log "-$usuario-Instalador-INF-Reparacion de carpeta $line"
-	rm -f -r "$line"
-     fi   
+    rm -f -r "$line"
+     fi
 #   contador+=1
   done <<<"$carpetasABorrar"
  mensaje "Borrar todo los logs de dirconf"
- log "-$usuario-Instalador-INF-Borrar logs de dirconf" 
+ log "-$usuario-Instalador-INF-Borrar logs de dirconf"
  rm "$GRUPO/dirconf/"*
 }
 
@@ -130,11 +128,11 @@ source ./menu.sh
 usuario=$(id -u -n)
 #Hago dirconf
 if [ ! -d "$GRUPO/dirconf" ]; then
-	mensaje "dirconf no creado"
+    mensaje "dirconf no creado"
 #lo creo
-	mkdir "$GRUPO/dirconf"
+    mkdir "$GRUPO/dirconf"
 fi
- 
+
 chequearSistema
 chequeo=$?
 
@@ -157,7 +155,7 @@ if [ "$chequeo" == 0 ]; then
 
    instalacion
 
-else 
+else
    mensaje "Ya esta instalado"
    log "-$usuario-Instalador-ERROR-Sistema ya instalado"
 fi
@@ -167,13 +165,13 @@ fi
 ##
    mensaje "no reparo"
    mensaje "Instalacion forzada"
-   log "-$usuario-Instalador-INF-Instalacion forzada"   
+   log "-$usuario-Instalador-INF-Instalacion forzada"
    desinstalar
    instalacion
     ;;
   "-d")
-   mensaje "Desinstalacion de sistema"   
-   log "-$usuario-Instalador-INF-MODO DESINSTALACION"  
+   mensaje "Desinstalacion de sistema"
+   log "-$usuario-Instalador-INF-MODO DESINSTALACION"
    desinstalar
 
   ;;
