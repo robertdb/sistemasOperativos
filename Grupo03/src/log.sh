@@ -8,7 +8,7 @@ if [ ! -v LOGFILE ]; then LOGFILE=log; else LOGFILE+=".log"; fi
 # Añade un registro al log de la forma "[yyyy-mm-dd hh:mm] <args>" donde args
 # son los argumentos de la funcion.
 function log() {
-    if [ ! -v LOGS ]; then return; fi
+    if [ ! -v LOGS ] || [ ! -d $LOGS ]; then return; fi
     echo [$(date "+%Y-%m-%d %H:%M")] "$@" >>$LOGS/$LOGFILE
 }
 
