@@ -4,7 +4,6 @@
 # eg: si quiere usar el log preparador.log, setee LOGFILE=preparador
 
 if [ ! -v LOGFILE ]; then LOGFILE=log; else LOGFILE+=".log"; fi
-if [ -e $LOGS/$LOGFILE ] && [ ! -w $LOGS/$LOGFILE ]; then exit; fi
 
 # Añade un registro al log de la forma "[yyyy-mm-dd hh:mm] <args>" donde args
 # son los argumentos de la funcion.
