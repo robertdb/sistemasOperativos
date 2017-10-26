@@ -32,54 +32,13 @@ while read linea; do
     fi
 done < "$GRUPO/dirconf/configuracion.conf"
 
-if [ ! -v LOGS ]; then
-    echo "no esta log en archivo de configuracion"
-elif [ ! -d $LOGS ]; then
-    echo "directorio de logs no existe"
-    reportar
-fi
-
-if [ ! -v MAESTROS ]; then
-    echo "no esta maestros en archivo de configuracion"
-elif [ ! -d $MAESTROS ]; then
-    echo "directorio maestros no existe"
-    reportar
-fi
-
-if [ ! -v EJECUTABLES ]; then
-    echo "no esta ejecutables en archivo de configuracion"
-elif [ ! -d $EJECUTABLES ]; then
-    echo "directorio de ejecutables no existe"
-    reportar
-fi
-
-if [ ! -v ACEPTADOS ]; then
-    echo "no esta aceptados en archivo de configuracion"
-elif [ ! -d $ACEPTADOS ]; then
-    echo "directorio de aceptados no existe"
-    reportar
-fi
-
-if [ ! -v RECHAZADOS ]; then
-    echo "no esta rechazados en archivo de configuracion"
-elif [ ! -d $RECHAZADOS ]; then
-    echo "directorio de rechazados no existe"
-    reportar
-fi
-
-if [ ! -v VALIDADOS ]; then
-    echo "no esta validados en archivo de configuracion"
-elif [ ! -d $VALIDADOS ]; then
-    echo "directorio de validados no existe"
-    reportar
-fi
-
-if [ ! -v REPORTES ]; then
-    echo "no esta reportes en archivo de configuracion"
-elif [ ! -d $REPORTES ]; then
-    echo "directorio de reportes no existe"
-    reportar
-fi
+for x in MAESTROS EJECUTABLES ACEPTADOS RECHAZADOS VALIDADOS REPORTES LOGS; do
+    if [ ! -v $x ]; then
+        echo "no esta $x en archivo de configuracion"
+    elif [ ! -d ${!x} ]; then
+        reportar "directorio de $x no existe"
+    fi
+done
 
 log "se crea la variable de ambiente DIRABUS"
 echo "se crea la variable de ambiente DIRABUS"
