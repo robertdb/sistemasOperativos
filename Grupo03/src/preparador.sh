@@ -6,169 +6,91 @@ GRUPO=$(pwd | sed "s-\(.*Grupo03\).*-\1-")
 function reportar() {
     echo -e "\e[1;31m$1\e[0m"
     echo -e "\e[1;31mPara reparar la instalación corra el script './instalador.sh -r'\e[0m"
-    log $1
 }
 
-declare -r ejecutables="ejecutables"
-declare -r maestros="maestros"
-declare -r aceptados="aceptados"
-declare -r rechazados="rechazados"
-declare -r validados="validados"
-declare -r reportes="reportes"
-declare -r logs="logs"
+while read linea; do
+    if [[ -z $linea ]]; then continue; fi
 
-declare -A map
+    key=$(echo "$linea" | cut -d- -f1)
+    ruta=$(echo "$linea" | cut -d- -f2)
+    user=$(echo "$linea" | cut -d- -f3)
 
+    case "$key" in
+        maestros) export MAESTROS=$ruta;;
+        ejecutables) export EJECUTABLES=$ruta;;
+        aceptados) export ACEPTADOS=$ruta;;
+        rechazados) export RECHAZADOS=$ruta;;
+        validados) export VALIDADOS=$ruta;;
+        reportes) export REPORTES=$ruta;;
+        logs) export LOGS=$ruta;;
+    esac
 
-while read linea
-do
-    if [[ -z $linea ]]; then
-      continue
-    fi
-    key=$(echo "$linea" | grep --only-matching '^[^-]*')
-
-    user=$(echo "$linea" | sed 's#^[^-]*-[^-]*-\([^-]*\).*#\1#')
-
-    if [[ $key == $maestros ]]; then
-      maestro_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
-    fi
-
-    if [[ $key == $ejecutables ]]; then
-      ejecutables_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
-    fi
-
-    if [[ $key == $aceptados ]]; then
-      aceptados_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
-    fi
-
-    if [[ $key == $rechazados ]]; then
-      rechazados_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
-    fi
-
-    if [[ $key == $validados ]]; then
-      validados_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
-    fi
-
-    if [[ $key == $reportes ]]; then
-      reportes_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
-    fi
-
-    if [[ $key == $logs ]]; then
-      logs_ruta=$(echo "$linea" | sed 's#^[^-]*-\([^-]*\).*#\1#')
-    fi
-
-    if [[ -z $flag ]]; then
-      flag=$user
-    fi
+    if [[ -z $flag ]]; then flag=$user; fi
 
     if [[ $flag != $user ]]; then
       reportar "Error de usuario, tiene que ser el mismo para todas rutas"
-      exit 1
     fi
-
-    map[$key]=$((${map[$key]} + 1))
-
 done < "$GRUPO/dirconf/configuracion.conf"
 
-declare -A mapErrors
-
-#nombrar directorios faltantes, cortar ejecucion
-  if [[ -z "${map[${ejecutables}]}" ]]; then
-    reportar "No existe el directorio $ejecutables"
-    exit 1
-  fi
-  if [[ -z "${map[${maestros}]}" ]]; then
-    reportar "No existe el directorio $maestros";
-    exit 1
-  fi
-  if [[ -z "${map[${aceptados}]}" ]]; then
-    reportar "No existe el directorio $aceptados";
-    exit 1
-  fi
-  if [[ -z "${map[${rechazados}]}" ]]; then
-    reportar "No existe el directorio $rechazados";
-    exit 1
-  fi
-  if [[ -z "${map[${validados}]}" ]]; then
-    reportar "No existe el directorio $validados";
-    exit 1
-  fi
-  if [[ -z "${map[${reportes}]}" ]]; then
-    reportar "No existe el directorio $reportes";
-    exit 1
-  fi
-  if [[ -z "${map[${logs}]}" ]]; then
-    reportar "No existe el directorio $logs";
-    exit 1
-  fi
-
-
-for i in "${!map[@]}"
-do
-  case $i in
-
-    $ejecutables )
-      ;;
-    $maestros )
-      ;;
-    $aceptados )
-      ;;
-    $rechazados )
-    ;;
-    $validados )
-    ;;
-    $reportes )
-    ;;
-    $logs )
-    ;;
-    * ) mapErrors[$i]="Directorio $i inválido, verifique las rutas de configuración"
-        continue
-   ;;
-  esac
-
-  if [[ ${map[$i]} -gt 1 ]]; then
-    mapErrors[$i]="Directorio $i esta duplicado"
-  fi
-
-done
-
-if [[ ${#mapErrors[@]} > 0 ]]; then
-  for i in "${!mapErrors[@]}"
-  do
-    reportar "${mapErrors[$i]}"
-  done
-  exit 1
+if [ ! -v LOGS ]; then
+    echo "no esta log en archivo de configuracion"
+elif [ ! -d $LOGS ]; then
+    echo "directorio de logs no existe"
+    reportar
 fi
 
-export DIRABUS
-read -p $'Defina el directorio de búsqueda: Grupo03/' -ei dirabus DIRABUS
-DIRABUS=$GRUPO/$DIRABUS
+if [ ! -v MAESTROS ]; then
+    echo "no esta maestros en archivo de configuracion"
+elif [ ! -d $MAESTROS ]; then
+    echo "directorio maestros no existe"
+    reportar
+fi
 
-echo -e "\e[1;32mDirectorio de búsqueda creado correctamente.\e[0m"
+if [ ! -v EJECUTABLES ]; then
+    echo "no esta ejecutables en archivo de configuracion"
+elif [ ! -d $EJECUTABLES ]; then
+    echo "directorio de ejecutables no existe"
+    reportar
+fi
+
+if [ ! -v ACEPTADOS ]; then
+    echo "no esta aceptados en archivo de configuracion"
+elif [ ! -d $ACEPTADOS ]; then
+    echo "directorio de aceptados no existe"
+    reportar
+fi
+
+if [ ! -v RECHAZADOS ]; then
+    echo "no esta rechazados en archivo de configuracion"
+elif [ ! -d $RECHAZADOS ]; then
+    echo "directorio de rechazados no existe"
+    reportar
+fi
+
+if [ ! -v VALIDADOS ]; then
+    echo "no esta validados en archivo de configuracion"
+elif [ ! -d $VALIDADOS ]; then
+    echo "directorio de validados no existe"
+    reportar
+fi
+
+if [ ! -v REPORTES ]; then
+    echo "no esta reportes en archivo de configuracion"
+elif [ ! -d $REPORTES ]; then
+    echo "directorio de reportes no existe"
+    reportar
+fi
 
 log "se crea la variable de ambiente DIRABUS"
+echo "se crea la variable de ambiente DIRABUS"
+export DIRABUS
+read -p $'Defina el directorio de búsqueda: Grupo03/' -ei dirabus DIRABUS
+DIRABUS="$GRUPO/$DIRABUS"
+echo -e "\e[1;32mDirectorio de búsqueda creado correctamente.\e[0m"
 
-export MAESTROS=$maestro_ruta
-log "se crea la variable de ambiente MAESTROS"
-
-export EJECUTABLES=$ejecutables_ruta
-log "se crea la variable de ambiente EJECUTABLES"
-
-export ACEPTADOS=$aceptados_ruta
-log "se crea la variable de ambiente ACEPTADOS"
-
-export RECHAZADOS=$rechazados_ruta
-log "se crea la variable de ambiente RECHAZADOS"
-
-export VALIDADOS=$validados_ruta
-log "se crea la variable de ambiente VALIDADOS"
-
-export REPORTES=$reportes_ruta
-log "se crea la variable de ambiente REPORTES"
-export LOGS=$logs_ruta
-log "se crea la variable de ambiente LOGS"
-
-find "$MAESTRO" -type f -exec chmod u+r {} +
+log "cambio de permisos en MAESTROS y EJECUTABLES"
+echo "cambio de permisos en MAESTROS y EJECUTABLES"
+find "$MAESTROS" -type f -exec chmod u+r {} +
 find "$EJECUTABLES" -type f -exec chmod u+x {} +
 
 export PID_DEMONIO=./start_demonio.sh
