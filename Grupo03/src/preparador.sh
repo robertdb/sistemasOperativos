@@ -52,4 +52,4 @@ echo "cambio de permisos en MAESTROS y EJECUTABLES"
 find "$MAESTROS" -type f -exec chmod u+r {} +
 find "$EJECUTABLES" -type f -exec chmod u+x {} +
 
-export PID_DEMONIO=./start_demonio.sh
+export PID_DEMONIO=$(./start_demonio.sh)
