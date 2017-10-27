@@ -65,4 +65,6 @@ for (( i = 1; ; i++ )); do
 
     if [ -z $(ls -A $DIRABUS) ]; then continue; fi
     for file in $DIRABUS/*; do procesarArchivo $file; done
+    
+    if [ -z $(ls -A $ACEPTADOS) ]; then $EJECUTABLES/validador.sh; fi
 done
