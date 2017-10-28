@@ -5,15 +5,6 @@ source log.sh
 
 source mv.sh
 
-if [ ! -v DIRABUS ]; then DIRABUS=dirabus; fi
-if [ ! -d $DIRABUS ]; then mkdir --parents $DIRABUS; fi
-
-if [ ! -v ACEPTADOS ]; then ACEPTADOS=aceptados; fi
-if [ ! -d $ACEPTADOS ]; then mkdir --parents $ACEPTADOS; fi
-
-if [ ! -v RECHAZADOS ]; then RECHAZADOS=rechazados; fi
-if [ ! -d $RECHAZADOS ]; then mkdir --parents $RECHAZADOS; fi
-
 # Rechaza un archivo y registra el evento en el log.
 #
 # El segundo argumento es un mensaje opcional que se agrega al log.
@@ -65,4 +56,6 @@ for (( i = 1; ; i++ )); do
 
     if [ -z $(ls -A $DIRABUS) ]; then continue; fi
     for file in $DIRABUS/*; do procesarArchivo $file; done
+    
+    if [ -z $(ls -A $ACEPTADOS) ]; then $EJECUTABLES/validador.sh; fi
 done
