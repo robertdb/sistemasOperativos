@@ -275,9 +275,9 @@ while read -r lin; do
                 buscarEntidadBancaria $entidad
                 ((contadoraceptados++))
                 case "$VIEJA" in
-                    Rechazada) flag=0;
-                    Entregada) flag=1;
-                    *) flag=2;
+                    Rechazada) flag=0;;
+                    Entregada) flag=1;;
+                    *) flag=2;;
                 esac
                 echo -n "$nombredeinput;$CUENTA;$estado;$flag;$denunciada;$bloqueada" | cat >> $VALIDADOS/$NOMBREARCHOK
                 echo -n "; ; ;VALIDADOR;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $VALIDADOS/$NOMBREARCHOK
