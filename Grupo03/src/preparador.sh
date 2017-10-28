@@ -45,6 +45,7 @@ echo "se crea la variable de ambiente DIRABUS"
 export DIRABUS
 read -p $'Defina el directorio de búsqueda: Grupo03/' -ei dirabus DIRABUS
 DIRABUS="$GRUPO/$DIRABUS"
+mkdir --parents $DIRABUS
 echo -e "\e[1;32mDirectorio de búsqueda creado correctamente.\e[0m"
 
 log "cambio de permisos en MAESTROS y EJECUTABLES"
