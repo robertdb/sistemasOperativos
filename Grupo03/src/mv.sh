@@ -12,8 +12,6 @@ function _mv() {
     if ! [ -d $dir ]; then
         echo "argumento 1 $1 de _mv no era un directorio" >&2
     fi
-    # Asegurar que $dir no termine en /
-    dir=$(dirname $dir)
 
     for file in $@; do
         # Que pasa si $dir termina en / ?
