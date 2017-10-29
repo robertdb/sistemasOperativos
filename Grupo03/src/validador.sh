@@ -45,27 +45,25 @@ NOMBREARCHOK+=".txt"
 yaseproceso(){
 	archi=$1
 	unset lineas
-	for lineas in ./$ACEPTADOS/$PROCESADOS/*.txt
+	for lineas in $PROCESADOS/*.txt
 	do
 
 		listd=$(echo "$lineas" | tr ' ' '/')
 		listda=$(echo "$listd" | cut -d '/' -f4)
 		if [ $listda = $archi ]; then
-			cp ./$ACEPTADOS/$arch ./$ACEPTADOS/$RECHAZADOS
+			cp $ACEPTADOS/$arch $RECHAZADOS
 			return 1
 		fi	
 	done
-			cp ./$ACEPTADOS/$arch ./$ACEPTADOS/$PROCESADOS
-			return 0
-	
+    cp $ACEPTADOS/$arch $PROCESADOS
+    return 0
 }	
-
 
 buscarEntidadBancaria() {
 contador=0;
 oldIFS=$IFS;
 IFS=$'\n';
-for linea in $(cat ./$MAESTROS/bamae)
+for linea in $(cat $MAESTROS/bamae)
 do
 	enti=$(echo "$linea" | cut -d ';' -f1);
 	if [ $contador -ne 0 ];	then
@@ -86,7 +84,7 @@ contar=0;
 encontro=0;
 #oldIFS=$IFS;
 #IFS=$'\n';
-for linea in $(cat ./$MAESTROS/tx_tarjetas)
+for linea in $(cat $MAESTROS/tx_tarjetas)
 do
 	#linea=$(echo -e "$line\n");
 	cuenta=$(echo "$linea" | cut -d ';' -f2);
@@ -125,13 +123,13 @@ if [ ! -v ACEPTADOS ]; then ACEPTADOS=aceptados; fi
 if [ ! -v RECHAZADOS ]; then RECHAZADOS=rechazados; fi
 if [ ! -v VALIDADOS ]; then VALIDADOS=validados; fi
 if [ ! -v MAESTROS ]; then MAESTROS=maestros; fi
-if [ ! -d $VALIDADOS ]; then mkdir ./$VALIDADOS; fi
-if [ ! -d $ACEPTADOS ]; then mkdir ./$ACEPTADOS; fi
-if [ ! -d ./$ACEPTADOS/$PROCESADOS ]; then 
-	mkdir ./$ACEPTADOS/$PROCESADOS;
+if [ ! -d $VALIDADOS ]; then mkdir $VALIDADOS; fi
+if [ ! -d $ACEPTADOS ]; then mkdir $ACEPTADOS; fi
+if [ ! -d $PROCESADOS ]; then 
+	mkdir $PROCESADOS;
 fi
-if [ ! -d ./$ACEPTADOS/$RECHAZADOS ]; then 
-	mkdir ./$ACEPTADOS/$RECHAZADOS;
+if [ ! -d $RECHAZADOS ]; then 
+	mkdir $RECHAZADOS;
 fi
 }
 tieneInfo() {
@@ -165,7 +163,7 @@ do
 		fi
 	fi
 ((contador++))
-done < ./$MAESTROS/cumae
+done < $MAESTROS/cumae
 return 1;
 }	
 chequearExistenciaProcesados
@@ -181,8 +179,8 @@ echo "PROCESANDO..."
 cuentaarchacept=0;
 while read -r lin
 do
-	if [ "$(ls -A ./$ACEPTADOS/$PROCESADOS)" ]; then
-		listadoprocesados=$(ls ./$ACEPTADOS/$PROCESADOS/*.txt)
+	if [ "$(ls -A $PROCESADOS)" ]; then
+		listadoprocesados=$(ls $PROCESADOS/*.txt)
 	else
 		listadoprocesados="d";	
 	fi
@@ -199,7 +197,7 @@ do
 	exit
 	fi
 	if [ $? -eq 1 ]; then
-		mv $ACEPTADOS/$archi $ACEPTADOS/$RECHAZADOS
+		mv $ACEPTADOS/$archi $RECHAZADOS
 		continue;
 	fi
 	echo "PROCESANDO $arch"
@@ -304,7 +302,7 @@ do
 		else
 			((contadorrechazados++))
   ### si el registro no fue aceptado se graba la salidaNoOk
-		echo "$nombredeinput;$rechazados;$CUENTA;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $ACEPTADOS/$RECHAZADOS/$NOMBREARCHNOK
+		echo "$nombredeinput;$rechazados;$CUENTA;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $RECHAZADOS/$NOMBREARCHNOK
 		log "registro nº $cuentaregistros: error! $rechazados,"
 		fi
   fi	
@@ -320,7 +318,7 @@ else
 	log "total de registros rechazados $contadorrechazados"
 	log "archivo rechazado $nombredeinput $rechazados" 
 fi
-rm ./$ACEPTADOS/$arch
+rm $ACEPTADOS/$arch
 done <<<"$listado"
 echo "FINALIZADO EL PROCESO"
 if [ $cuentaarchacept -gt 0 ]; then	
