@@ -44,22 +44,16 @@ NOMBREARCHOK+=".txt"
 
 yaseproceso(){
 	archi=$1
-	unset lineas
-	for lineas in $ACEPTADOS/$PROCESADOS/*.txt
-	do
-
-		listd=$(echo "$lineas" | tr ' ' '/')
-		listda=$(echo "$listd" | cut -d '/' -f4)
-		if [ $listda = $archi ]; then
-			cp $ACEPTADOS/$arch $ACEPTADOS/$RECHAZADOS
+	for file in $PROCESADOS/*.txt; do
+        local name=$(basename $file)
+		if [ $name = $archi ]; then
+			cp $ACEPTADOS/$arch $RECHAZADOS
 			return 1
 		fi	
 	done
-			cp $ACEPTADOS/$arch $ACEPTADOS/$PROCESADOS
-			return 0
-	
+    cp $ACEPTADOS/$arch $PROCESADOS
+    return 0
 }	
-
 
 buscarEntidadBancaria() {
 contador=0;
@@ -127,8 +121,8 @@ if [ ! -v VALIDADOS ]; then VALIDADOS=validados; fi
 if [ ! -v MAESTROS ]; then MAESTROS=maestros; fi
 if [ ! -d $VALIDADOS ]; then mkdir $VALIDADOS; fi
 if [ ! -d $ACEPTADOS ]; then mkdir $ACEPTADOS; fi
-if [ ! -d $ACEPTADOS/$PROCESADOS ]; then 
-	mkdir $ACEPTADOS/$PROCESADOS;
+if [ ! -d $PROCESADOS ]; then 
+	mkdir $PROCESADOS;
 fi
 if [ ! -d $RECHAZADOS ]; then 
 	mkdir $RECHAZADOS;
@@ -181,8 +175,8 @@ echo "PROCESANDO..."
 cuentaarchacept=0;
 while read -r lin
 do
-	if [ "$(ls -A $ACEPTADOS/$PROCESADOS)" ]; then
-		listadoprocesados=$(ls $ACEPTADOS/$PROCESADOS/*.txt)
+	if [ "$(ls -A $PROCESADOS)" ]; then
+		listadoprocesados=$(ls $PROCESADOS/*.txt)
 	else
 		listadoprocesados="d";	
 	fi
@@ -191,10 +185,9 @@ do
 	contadoraceptados=0;
 	contadorrechazados=0;
 	arch=$(basename $lin)
-	#arch=$(echo "$lin" | cut -d '/' -f2)
 	log "procesando $arch"
 	if [ $listadoaceptados -eq 1 ]; then	
-		yaseproceso $arch $listadoprocesados
+		yaseproceso $arch
 	else
 		echo "PROCESO FINALIZADO"
 	exit
@@ -305,7 +298,7 @@ do
 		else
 			((contadorrechazados++))
   ### si el registro no fue aceptado se graba la salidaNoOk
-		echo "$nombredeinput;$rechazados;$CUENTA;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $ACEPTADOS/$RECHAZADOS/$NOMBREARCHNOK
+		echo "$nombredeinput;$rechazados;$CUENTA;$documento;$denominacion;$t1;$t2;$t3;$t4;$fechadesde;$aux/$aux2/$aux4" | cat >> $RECHAZADOS/$NOMBREARCHNOK
 		log "registro nº $cuentaregistros: error! $rechazados,"
 		fi
   fi	
