@@ -177,7 +177,7 @@ sub filtrarEstadoDeTarjeta {
     my $xb = "*";
 
     my $filtro = $filtros{"T"};
-    my $temp
+    my $temp;
     while (defined( $temp = chop($filtro) )) {
         if ($temp eq "v") { $xv = 1; }
         elsif ($temp eq "V") { $xv = 0; }
