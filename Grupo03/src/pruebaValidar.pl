@@ -1,8 +1,15 @@
-validar("c,e,f,d,g");
+validar();
 # c,t,d,e,f 
 # e puede venir con rango 
 sub validar{
- my ($filtro) = @_;
+
+# my ($filtro) = @_;
+  print "Ingrese el filtro, manera c20,e20-323,f20,t2020\n"; 
+  print "O ingrese * para TODOS \n";
+  $filtro = <STDIN>;
+  chomp($filtro);  
+  
+
  $incorrecto = 1;
 # Para salir del while debe ser 0
  while ( $incorrecto == 1 ){
