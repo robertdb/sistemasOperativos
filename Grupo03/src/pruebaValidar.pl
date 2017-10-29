@@ -19,7 +19,7 @@ sub validar {
         $hayIncorrecto = 0;
         foreach $cosa (@array) {
             TRACE("foreach: ", $cosa);
-            if ( $cosa =~ /^[c,t,d,e,f,T].*/) {
+            if ( $cosa =~ /^[c,t,d,e,f,T,C].*/) {
             } else {
                 $hayIncorrecto = 1;
                 last;

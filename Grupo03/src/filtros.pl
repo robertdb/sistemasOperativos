@@ -237,3 +237,45 @@ sub filtrarCuentas {
     TRACE();
     return 0;
 }
+# Usa $filtros{"C"}, espera uno de los siguientes formatos:
+# undef: aceptar todo
+# lista_de_estados: aceptar sii el estado de la tarjeta es uno de
+#   los estados solicitados
+#
+#   Los estados
+#
+# EBNF
+#   lista_de_estados = estado { "-" lista_de_estados }
+#
+# estado es un prefijo case-insensitive (eg: act, a, ACTIVA, y Act, todas
+#   matchean ACTIVA)
+sub filtrarEstadoDeTarjeta {
+    my @reg = split(/;/, shift @_);
+    my $estado = @reg[2];
+
+    my %filtros = %{shift @_};
+
+    TRACE("filtrando por estado de cuenta ", $estado);
+
+    if (! exists $filtros{"C"}) {
+        TRACE("registro aceptado: no hay filtro");
+        TRACE();
+        return 1;
+    }
+
+    TRACE("filtro: ", $filtros{"C"});
+    my @f = split(/-/, $filtros{"C"});
+    foreach $e (@f) {
+        $e = uc($e);
+        $estado = uc($estado);
+        if ($e eq substr($estado, 0, length($e))) {
+            TRACE("registro aceptado");
+            TRACE();
+            return 1;
+        }
+    }
+
+    TRACE("registro rechazado");
+    TRACE();
+    return 0;
+}
