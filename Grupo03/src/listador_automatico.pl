@@ -1,16 +1,15 @@
 #!/usr/bin/perl
 
+$VALIDADOS = $ENV{"VALIDADOS"};
 
 use Time::Piece;
 
-$DIR_INPUT = "./validados";
-
 # obtengo el archivo a procesar
 my $file_input ="plasticos_emitidos_000.txt";
-opendir(DIR, $DIR_INPUT) or die $!;
+opendir(DIR, $VALIDADOS) or die $!;
 
 while (my $file = readdir(DIR)) {
-	next unless (-f "$DIR_INPUT/$file");
+	next unless (-f "$VALIDADOS/$file");
     if ($file_input lt $file){
     	$file_input = $file;
     }
@@ -25,15 +24,14 @@ if ( $file_input =~ /\_.*\_(.*?)\./ )
 }
 
 
-$file_input = "$DIR_INPUT/$file_input";
+$file_input = "$VALIDADOS/$file_input";
 open(ENTRADA, $file_input) || die "ERROR no se pudo abrir el archivo";
 
-
-$DIR_OUTPUT = "./reportes";
+$REPORTES = $ENV{"REPORTES"};
 $FILE_OUTPUT_BASE = "plasticos_distribucion_sec";
 
-$file_output = "$DIR_OUTPUT/$FILE_OUTPUT_BASE$secuence.txt";
-open($SALIDA, '>', $file_output) or die "ERROR no se pudo abrir el archivo '$file_output' $!";
+$file_output = "$REPORTES/$FILE_OUTPUT_BASE$secuence.txt";
+open(SALIDA, '>', $file_output) or die "ERROR no se pudo abrir el archivo '$file_output' $!";
 
 
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime;
@@ -121,7 +119,7 @@ while ($row=<ENTRADA>){
 	#print  "### condicion: $cond_dist\n";
 
 	# actualizacion de archivo
-	print $SALIDA join('', @list);
+	print SALIDA join('', @list);
 	$cantidad++;
 }
 
