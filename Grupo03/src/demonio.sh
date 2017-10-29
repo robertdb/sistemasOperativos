@@ -49,7 +49,7 @@ function procesarArchivo() {
 }
 
 for (( i = 1; ; i++ )); do
-    log $i
+    log "ciclo: " $i
     if [ $(($i%100)) -eq 0 ]; then truncate; fi
 
     sleep 10
