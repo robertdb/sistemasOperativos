@@ -1,14 +1,14 @@
-# Todas las subrutinas 
-#   $registro (string) valor del registro como se encuentra en el 
-#   \%filtros (hash) conjunto de filtros en los que 
+# Todas las subrutinas
+#   $registro (string) valor del registro como se encuentra en el
+#   \%filtros (hash) conjunto de filtros en los que
 #
-# Todas las funciones evaluan a verdadero si y solo si el 
+# Todas las funciones evaluan a verdadero si y solo si el
 # cumple con el filtro y debe ser aceptado.
 
 # Usa $filtros{"e"}, espera uno de los siguientes formatos:
-# undef: aceptar 
-# ddd: aceptar sii nro_entidad == 
-# aaa-bbb: aceptar sii aaa <= nro_entidad <= 
+# undef: aceptar
+# ddd: aceptar sii nro_entidad ==
+# aaa-bbb: aceptar sii aaa <= nro_entidad <=
 sub filtrarEntidades {
     my @reg = split(/;/, shift @_);
     my $entidad = @reg[21];
@@ -22,22 +22,22 @@ sub filtrarEntidades {
         return 1;
     }
 
-    if (!( $filtros{"e"} =~ /^(...)(-(...))?$/ )) { 
+    if (!( $filtros{"e"} =~ /^(...)(-(...))?$/ )) {
         TRACE("registro rechazado: filtro mal formado", $filtros{"e"});
         return 0;
     }
 
     if ($entidad < $1) {
         TRACE("registro rechazado:", $entidad, "<", $1);
-        return 0; 
+        return 0;
     }
-    if ($3 =! undef && $3 < $entidad) { 
+    if ($3 =! undef && $3 < $entidad) {
         TRACE("registro rechazado:", $entidad, ">", $3);
-        return 0; 
+        return 0;
     }
-    elsif ($3 == undef && $entidad != $1) { 
+    elsif ($3 == undef && $entidad != $1) {
         TRACE("registro rechazado:", $entidad, "!=", $1);
-        return 0; 
+        return 0;
     }
 
     TRACE("registro aceptado");
@@ -45,7 +45,7 @@ sub filtrarEntidades {
 }
 
 # Usa $filtros{"f"}, espera uno de los siguientes formatos:
-# undef: aceptar 
+# undef: aceptar
 # ddd: aceptar sii fuente es de la forma xxxxxxx_ddd.
 sub filtrarFuentes {
     my @reg = split(/;/, shift @_);
@@ -55,9 +55,9 @@ sub filtrarFuentes {
 
     TRACE("filtrando por fuente", $fuente);
 
-    if (! exists $filtros{"f"}) { 
+    if (! exists $filtros{"f"}) {
         TRACE("registro aceptado: no hay filtro");
-        return 1; 
+        return 1;
     }
 
     $fuente =~ /.*_(\d\d\d).txt/;
@@ -71,7 +71,7 @@ sub filtrarFuentes {
 }
 
 # Usa $filtros{"d"}, espera uno de los siguientes formatos:
-# undef: aceptar 
+# undef: aceptar
 # re: aceptar sii condicion =~ /re/
 sub filtrarCondicionesDeDistribucion {
     my @reg = split(/;/, shift @_);
@@ -83,11 +83,11 @@ sub filtrarCondicionesDeDistribucion {
 
     if (! exists $filtros{"d"}) { return 1; }
         TRACE("registro aceptado: no hay filtro");
-        
 
-    if ($condicion =~ /$filtros{"d"}/) { 
+
+    if ($condicion =~ /$filtros{"d"}/) {
         TRACE("registro aceptado");
-        return 1; 
+        return 1;
     }
 
     TRACE("registro rechazado:", $condicion, "no matchea", $filtros{"d"});
@@ -95,7 +95,7 @@ sub filtrarCondicionesDeDistribucion {
 }
 
 # Usa $filtros{"t"}, espera uno de los siguientes formatos:
-# undef: aceptar 
+# undef: aceptar
 # re: aceptar sii tarjeta =~ /re/
 sub filtrarTarjetas {
     my @reg = split(/;/, shift @_);
@@ -105,14 +105,14 @@ sub filtrarTarjetas {
 
     TRACE("filtrando por tarjeta", $tarjeta);
 
-    if (! exists $filtros{"t"}) { 
+    if (! exists $filtros{"t"}) {
         TRACE("registro aceptado: no hay filtro");
-        return 1; 
+        return 1;
     }
 
-    if ($tarjeta =~ /$filtros{"t"}/) { 
+    if ($tarjeta =~ /$filtros{"t"}/) {
         TRACE("registro aceptado");
-        return 1; 
+        return 1;
     }
 
     TRACE("registro rechazado:", $tarjeta, "no matchea", $filtros{"t"});
@@ -120,7 +120,7 @@ sub filtrarTarjetas {
 }
 
 # Usa $filtros{"c"}, espera uno de los siguientes formatos:
-# undef: aceptar 
+# undef: aceptar
 # re: aceptar sii cuenta =~ /re/
 sub filtrarCuentas {
     my @reg = split(/;/, shift @_);
@@ -130,14 +130,14 @@ sub filtrarCuentas {
 
     TRACE("filtrando por cuenta", $cuenta);
 
-    if (! exists $filtros{"c"}) { 
+    if (! exists $filtros{"c"}) {
         TRACE("registro aceptado: no hay filtro");
-        return 1; 
+        return 1;
     }
 
-    if ($cuenta =~ /$filtros{"c"}/) { 
+    if ($cuenta =~ /$filtros{"c"}/) {
         TRACE("registro aceptado");
-        return 1; 
+        return 1;
     }
 
     TRACE("registro rechazado:", $cuenta, "no matchea", $filtros{"c"});
