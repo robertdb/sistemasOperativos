@@ -25,6 +25,17 @@ sub filtrarEntidades {
 
 # Usa $filtros{"f"}
 sub filtrarFuentes {
+    my @reg = split(/;/, shift @_);
+    my $fuente = @reg[0];
+
+    my %filtros = %{shift @_};
+
+    if (! exists $filtros{"f"}) { return 1; }
+
+    $fuente =~ /.*_(\d\d\d).txt/;
+    if ($1 == $filtros{"f"}) { return 1; }
+
+    return 0;
 }
 
 # Usa $filtros{"d"}
