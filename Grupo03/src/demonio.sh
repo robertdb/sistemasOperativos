@@ -52,7 +52,7 @@ for (( i = 1; ; i++ )); do
     log $i
     if [ $(($i%100)) -eq 0 ]; then truncate; fi
 
-    sleep 1
+    sleep 10
 
     if [ -z "$(ls -A $DIRABUS)" ]; then continue; fi
     for file in $DIRABUS/*; do procesarArchivo $file; done
