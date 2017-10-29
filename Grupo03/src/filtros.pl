@@ -44,6 +44,16 @@ sub filtrarCondicionesDeDistribucion {
 
 # Usa $filtros{"t"}
 sub filtrarTarjetas {
+    my @reg = split(/;/, shift @_);
+    my $tarjeta = @reg[9];
+
+    my %filtros = %{shift @_};
+
+    if (! exists $filtros{"t"}) { return 1; }
+
+    if ($tarjeta =~ /$filtros{"t"}/) { return 1; }
+
+    return 0;
 }
 
 # Usa $filtros{"c"}
