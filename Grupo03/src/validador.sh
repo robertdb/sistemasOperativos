@@ -44,13 +44,9 @@ NOMBREARCHOK+=".txt"
 
 yaseproceso(){
 	archi=$1
-	unset lineas
-	for lineas in $PROCESADOS/*.txt
-	do
-
-		listd=$(echo "$lineas" | tr ' ' '/')
-		listda=$(echo "$listd" | cut -d '/' -f4)
-		if [ $listda = $archi ]; then
+	for file in $PROCESADOS/*.txt; do
+        local name=$(basename $file)
+		if [ $name = $archi ]; then
 			cp $ACEPTADOS/$arch $RECHAZADOS
 			return 1
 		fi	
@@ -191,7 +187,7 @@ do
 	arch=$(echo "$lin" | cut -d '/' -f2)
 	log "procesando $arch"
 	if [ $listadoaceptados -eq 1 ]; then	
-		yaseproceso $arch $listadoprocesados
+		yaseproceso $arch
 	else
 		echo "PROCESO FINALIZADO"
 	exit
