@@ -184,7 +184,7 @@ do
 	cuentaregistros=0;
 	contadoraceptados=0;
 	contadorrechazados=0;
-	arch=$(echo "$lin" | cut -d '/' -f2)
+	arch=$(basename $lin)
 	log "procesando $arch"
 	if [ $listadoaceptados -eq 1 ]; then	
 		yaseproceso $arch
