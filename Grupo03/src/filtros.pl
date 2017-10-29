@@ -11,7 +11,7 @@
 # aaa-bbb: aceptar sii aaa <= nro_entidad <=
 sub filtrarEntidades {
     my @reg = split(/;/, shift @_);
-    my $entidad = @reg[21];
+    my $entidad = @reg[22];
 
     my %filtros = %{shift @_};
 
@@ -34,7 +34,7 @@ sub filtrarEntidades {
         TRACE();
         return 0;
     }
-    if ($3 =! undef && $3 < $entidad) {
+    if ($3 != undef && $3 < $entidad) {
         TRACE("registro rechazado: ", $entidad, ">", $3);
         TRACE();
         return 0;
