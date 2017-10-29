@@ -81,8 +81,10 @@ sub filtrarCondicionesDeDistribucion {
 
     TRACE("filtrando por condicion de distribucion", $condicion);
 
-    if (! exists $filtros{"d"}) { return 1; }
+    if (! exists $filtros{"d"}) {
         TRACE("registro aceptado: no hay filtro");
+        return 1;
+    }
 
 
     if ($condicion =~ /$filtros{"d"}/) {
