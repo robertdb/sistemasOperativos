@@ -324,11 +324,9 @@ sub validar {
 $TRON = 1;
 
 
-$DIR_VALIDADOS = "./validados";
-$DIR_REPORTES = "./reportes";
+$DIR_VALIDADOS = $ENV{"VALIDADOS"};
+$DIR_REPORTES = $ENV{"REPORTES"};
 
-
-$DIR_OUTPUT = "./reportes";
 $FILE_OUTPUT_CUENTAS = "listados_cuentas_";
 $FILE_OUTPUT_TARJETAS = "listados_tarjetas_";
 $FILE_OUTPUT_COND_DISTR = "listados_cond_distr_";
@@ -514,7 +512,7 @@ while($opcion_listado!=0){
 				}
 
 				print "# inicio de proceso...\n\n";
-				search_by_filters(\%filters, \@files_input, "listado_tarjetas_");
+				search_by_filters(\%filters, \@files_input, "listado_condist_");
 				print  "# fin de proceso\n\n";
 			}
 
@@ -553,7 +551,8 @@ while($opcion_listado!=0){
 			}
 
 			print "# inicio de proceso...\n\n";
-			search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
+			search_by_filters(\%filtros, \@files_input,
+                    "listado_cuenta_particular_");
 			print  "# fin de proceso\n\n";
 		}
 	}
@@ -593,7 +592,8 @@ while($opcion_listado!=0){
 				}
 
 				print "# inicio de proceso...\n\n";
-				search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
+				search_by_filters(\%filtros, \@files_input,
+                        "listado_tarjeta_particular_");
 				print  "# fin de proceso\n\n";
 			}
 
@@ -637,7 +637,7 @@ sub search_by_filters {
 		my $fecha_hora = "$year$mon$mday$hour$min$sec$SEP";
 
 		# archivo unico
-		$file_output = "$DIR_OUTPUT/$file_output_name$fecha_hora$secuence.txt";
+		$file_output = "$DIR_REPORTES/$file_output_name$fecha_hora$secuence.txt";
 		open(SALIDA, '>', $file_output) or die "ERROR no se pudo abrir el archivo '$file_output' $!";
 
 
