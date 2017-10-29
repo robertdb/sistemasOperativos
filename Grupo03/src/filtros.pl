@@ -136,6 +136,74 @@ sub filtrarTarjetas {
     return 0;
 }
 
+# Usa $filtros{"T"}, espera uno de los siguientes formatos:
+# undef: aceptar todo
+# lista_de_estados: aceptar sii el estado de la tarjeta
+#   corresponde a la lista solicitada. Un estado en minuscula
+#   significa que el campo debe estar seteado (eg: "d" significa que
+#   la tarjeta debe estar denunciada) Un estado en mayuscula
+#   significa que el campo de no estar seteado (eg: "D" significa que
+#   la tarjeta no debe estar denunciada)
+#
+#   En caso en que un estado (o dos estados contradictorios) aparezca
+#   mas de una vez, la primera instancia toma precedencia
+#   (eg: en "dBvD" la tarjeta debe estar denunciada para corresponder
+#   al filtro)
+#
+# EBNF
+#   lista_de_estados = { denunciada | bloqueada | vencida }
+#   denunciada = [ "d" | "D" ]
+#   bloqueada = [ "b" | "B" ]
+#   vencida = [ "v" | "V" ]
+sub filtrarEstadoDeTarjeta {
+    my @reg = split(/;/, shift @_);
+    my @estado = @reg[3..5];
+
+    my %filtros = %{shift @_};
+
+    TRACE("filtrando por estado de cuenta ", @estado);
+
+    if (! exists $filtros{"T"}) {
+        TRACE("registro aceptado: no hay filtro");
+        return 1;
+    }
+
+    my $v = @estado[0];
+    my $d = @estado[1];
+    my $b = @estado[2];
+
+    my $xv = "*";
+    my $xd = "*";
+    my $xb = "*";
+
+    my $filtro = $filtros{"T"};
+    my $temp
+    while (defined( $temp = chop($filtro) )) {
+        if ($temp eq "v") { $xv = 1; }
+        elsif ($temp eq "V") { $xv = 0; }
+        elsif ($temp eq "d") { $xd = 1; }
+        elsif ($temp eq "D") { $xd = 0; }
+        elsif ($temp eq "b") { $xb = 1; }
+        elsif ($temp eq "B") { $xb = 0; }
+    }
+
+    if ($xv != "*" and $xv ne $v) {
+        TRACE("registro rechazado: vencimiento");
+        return 0;
+    }
+    if ($xd != "*" and $xd ne $d) {
+        TRACE("registro rechazado: denuncia");
+        return 0;
+    }
+    if ($xb != "*" and $xb ne $b) {
+        TRACE("registro rechazado: bloqueo");
+        return 0;
+    }
+
+    TRACE("registro aceptado");
+    return 1;
+}
+
 # Usa $filtros{"c"}, espera uno de los siguientes formatos:
 # undef: aceptar
 # re: aceptar sii cuenta =~ /re/
