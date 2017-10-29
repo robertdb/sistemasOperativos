@@ -7,7 +7,7 @@ sub validar {
     $filtro = <STDIN>;
     chomp($filtro);
 
-    TRACE("Filtro es", $filtro);
+    TRACE("Filtro es ", $filtro);
     if ($filtro eq "0") { return $filtro; }
     if ($filtro eq "*") { return $filtro; }
 
@@ -18,7 +18,7 @@ sub validar {
         @array=split(',',$filtro);
         $hayIncorrecto = 0;
         foreach $cosa (@array) {
-            TRACE("foreach:", $cosa);
+            TRACE("foreach: ", $cosa);
             if ( $cosa =~ /^[c,t,d,e,f].*/) {
             } else {
                 $hayIncorrecto = 1;
