@@ -69,13 +69,13 @@ sub filtrarTarjetas {
 # Usa $filtros{"c"}
 sub filtrarCuentas {
     my @reg = split(/;/, shift @_);
-    my $tarjeta = @reg[17];
+    my $cuenta = @reg[17];
 
     my %filtros = %{shift @_};
 
     if (! exists $filtros{"c"}) { return 1; }
 
-    if ($tarjeta =~ /$filtros{"c"}/) { return 1; }
+    if ($cuenta =~ /$filtros{"c"}/) { return 1; }
 
     return 0;
 }
