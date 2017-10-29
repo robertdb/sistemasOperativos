@@ -7,15 +7,18 @@ sub validar {
     $filtro = <STDIN>;
     chomp($filtro);
 
+    TRACE("Filtro es", $filtro);
     if ($filtro eq "0") { return $filtro; }
     if ($filtro eq "*") { return $filtro; }
 
     $incorrecto = 1;
     while ( $incorrecto == 1 ) {
-        print "$filtro \n";
+        TRACE("entrando al loop");
+
         @array=split(',',$filtro);
         $hayIncorrecto = 0;
         foreach $cosa (@array) {
+            TRACE("foreach:", $cosa);
             if ( $cosa =~ /^[c,t,d,e,f].*/) {
             } else {
                 $hayIncorrecto = 1;
