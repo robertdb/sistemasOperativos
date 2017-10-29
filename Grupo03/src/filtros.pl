@@ -249,7 +249,7 @@ sub filtrarCuentas {
 #
 # estado es un prefijo case-insensitive (eg: act, a, ACTIVA, y Act, todas
 #   matchean ACTIVA)
-sub filtrarEstadoDeTarjeta {
+sub filtrarEstadoDeCuenta {
     my @reg = split(/;/, shift @_);
     my $estado = @reg[2];
 
