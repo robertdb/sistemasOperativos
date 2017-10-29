@@ -15,32 +15,38 @@ sub filtrarEntidades {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por entidad", $entidad);
+    TRACE("filtrando por entidad ", $entidad);
 
     if (! exists $filtros{"e"}) {
         TRACE("registro aceptado: no hay filtro");
+        TRACE();
         return 1;
     }
 
     if (!( $filtros{"e"} =~ /^(...)(-(...))?$/ )) {
-        TRACE("registro rechazado: filtro mal formado", $filtros{"e"});
+        TRACE("registro rechazado: filtro mal formado ", $filtros{"e"});
+        TRACE();
         return 0;
     }
 
     if ($entidad < $1) {
-        TRACE("registro rechazado:", $entidad, "<", $1);
+        TRACE("registro rechazado: ", $entidad, "<", $1);
+        TRACE();
         return 0;
     }
     if ($3 =! undef && $3 < $entidad) {
-        TRACE("registro rechazado:", $entidad, ">", $3);
+        TRACE("registro rechazado: ", $entidad, ">", $3);
+        TRACE();
         return 0;
     }
     elsif ($3 == undef && $entidad != $1) {
-        TRACE("registro rechazado:", $entidad, "!=", $1);
+        TRACE("registro rechazado: ", $entidad, "!=", $1);
+        TRACE();
         return 0;
     }
 
     TRACE("registro aceptado");
+    TRACE();
     return 1;
 }
 
@@ -53,20 +59,23 @@ sub filtrarFuentes {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por fuente", $fuente);
+    TRACE("filtrando por fuente ", $fuente);
 
     if (! exists $filtros{"f"}) {
         TRACE("registro aceptado: no hay filtro");
+        TRACE();
         return 1;
     }
 
     $fuente =~ /.*_(\d\d\d).txt/;
     if ($1 == $filtros{"f"}) {
         TRACE("registro aceptado");
+        TRACE();
         return 1;
     }
 
-    TRACE("registro rechazado:", $fuente, "!=", $1);
+    TRACE("registro rechazado: ", $fuente, "!=", $1);
+    TRACE();
     return 0;
 }
 
@@ -79,20 +88,23 @@ sub filtrarCondicionesDeDistribucion {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por condicion de distribucion", $condicion);
+    TRACE("filtrando por condicion de distribucion ", $condicion);
 
     if (! exists $filtros{"d"}) {
         TRACE("registro aceptado: no hay filtro");
+        TRACE();
         return 1;
     }
 
 
     if ($condicion =~ /$filtros{"d"}/) {
         TRACE("registro aceptado");
+        TRACE();
         return 1;
     }
 
-    TRACE("registro rechazado:", $condicion, "no matchea", $filtros{"d"});
+    TRACE("registro rechazado: ", $condicion, " no matchea ", $filtros{"d"});
+    TRACE();
     return 0;
 }
 
@@ -105,19 +117,22 @@ sub filtrarTarjetas {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por tarjeta", $tarjeta);
+    TRACE("filtrando por tarjeta ", $tarjeta);
 
     if (! exists $filtros{"t"}) {
         TRACE("registro aceptado: no hay filtro");
+        TRACE();
         return 1;
     }
 
     if ($tarjeta =~ /$filtros{"t"}/) {
         TRACE("registro aceptado");
+        TRACE();
         return 1;
     }
 
-    TRACE("registro rechazado:", $tarjeta, "no matchea", $filtros{"t"});
+    TRACE("registro rechazado: ", $tarjeta, " no matchea ", $filtros{"t"});
+    TRACE();
     return 0;
 }
 
@@ -130,18 +145,21 @@ sub filtrarCuentas {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por cuenta", $cuenta);
+    TRACE("filtrando por cuenta ", $cuenta);
 
     if (! exists $filtros{"c"}) {
         TRACE("registro aceptado: no hay filtro");
+        TRACE();
         return 1;
     }
 
     if ($cuenta =~ /$filtros{"c"}/) {
         TRACE("registro aceptado");
+        TRACE();
         return 1;
     }
 
-    TRACE("registro rechazado:", $cuenta, "no matchea", $filtros{"c"});
+    TRACE("registro rechazado: ", $cuenta, " no matchea ", $filtros{"c"});
+    TRACE();
     return 0;
 }
