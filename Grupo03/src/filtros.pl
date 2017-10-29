@@ -40,6 +40,16 @@ sub filtrarFuentes {
 
 # Usa $filtros{"d"}
 sub filtrarCondicionesDeDistribucion {
+    my @reg = split(/;/, shift @_);
+    my $condicion = @reg[6];
+
+    my %filtros = %{shift @_};
+
+    if (! exists $filtros{"d"}) { return 1; }
+
+    if ($condicion =~ /$filtros{"d"}/) { return 1; }
+
+    return 0;
 }
 
 # Usa $filtros{"t"}
