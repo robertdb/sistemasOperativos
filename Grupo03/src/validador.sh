@@ -28,8 +28,7 @@ darnombrealasalida(){
 		vali=$(ls $VALIDADOS/*.txt)
 	for li in $(cat <<< $vali)
 	do
-		#listd=$(echo "$li" | tr ' ' '/')
-		listda=$(echo "$li" | cut -d '/' -f2)
+		listda=$(basename "$li")
 	done
 	else
 		return
@@ -44,14 +43,14 @@ NOMBREARCHOK+=".txt"
 
 yaseproceso(){
 	archi=$1
-	for file in $PROCESADOS/*.txt; do
-        local name=$(basename $file)
+	for file in $ACEPTADOS/$PROCESADOS/*.txt; do
+        local name=$(basename "$file")
 		if [ $name = $archi ]; then
 			cp $ACEPTADOS/$arch $RECHAZADOS
 			return 1
 		fi	
 	done
-    cp $ACEPTADOS/$arch $PROCESADOS
+    cp $ACEPTADOS/$arch $ACEPTADOS/$PROCESADOS
     return 0
 }	
 
@@ -121,8 +120,8 @@ if [ ! -v VALIDADOS ]; then VALIDADOS=validados; fi
 if [ ! -v MAESTROS ]; then MAESTROS=maestros; fi
 if [ ! -d $VALIDADOS ]; then mkdir $VALIDADOS; fi
 if [ ! -d $ACEPTADOS ]; then mkdir $ACEPTADOS; fi
-if [ ! -d $PROCESADOS ]; then 
-	mkdir $PROCESADOS;
+if [ ! -d $ACEPTADOS/$PROCESADOS ]; then 
+	mkdir $ACEPTADOS/$PROCESADOS;
 fi
 if [ ! -d $RECHAZADOS ]; then 
 	mkdir $RECHAZADOS;
@@ -175,8 +174,8 @@ echo "PROCESANDO..."
 cuentaarchacept=0;
 while read -r lin
 do
-	if [ "$(ls -A $PROCESADOS)" ]; then
-		listadoprocesados=$(ls $PROCESADOS/*.txt)
+	if [ "$(ls -A $ACEPTADOS/$PROCESADOS)" ]; then
+		listadoprocesados=$(ls $ACEPTADOS/$PROCESADOS/*.txt)
 	else
 		listadoprocesados="d";	
 	fi
@@ -184,7 +183,7 @@ do
 	cuentaregistros=0;
 	contadoraceptados=0;
 	contadorrechazados=0;
-	arch=$(basename $lin)
+	arch=$(basename "$lin")
 	log "procesando $arch"
 	if [ $listadoaceptados -eq 1 ]; then	
 		yaseproceso $arch
