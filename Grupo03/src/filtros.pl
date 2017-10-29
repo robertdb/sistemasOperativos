@@ -161,7 +161,7 @@ sub filtrarEstadoDeTarjeta {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por estado de cuenta ", @estado);
+    TRACE("filtrando por estado de tarjeta ", @estado);
 
     if (! exists $filtros{"T"}) {
         TRACE("registro aceptado: no hay filtro");
@@ -178,7 +178,7 @@ sub filtrarEstadoDeTarjeta {
 
     my $filtro = $filtros{"T"};
     my $temp;
-    while (defined( $temp = chop($filtro) )) {
+    while ( ($temp = chop($filtro)) == "" ) {
         if ($temp eq "v") { $xv = 1; }
         elsif ($temp eq "V") { $xv = 0; }
         elsif ($temp eq "d") { $xd = 1; }
@@ -186,6 +186,7 @@ sub filtrarEstadoDeTarjeta {
         elsif ($temp eq "b") { $xb = 1; }
         elsif ($temp eq "B") { $xb = 0; }
     }
+    TRACE("filtro: ", $xv, $xd, $xb);
 
     if ($xv != "*" and $xv ne $v) {
         TRACE("registro rechazado: vencimiento");
