@@ -165,6 +165,7 @@ sub filtrarEstadoDeTarjeta {
 
     if (! exists $filtros{"T"}) {
         TRACE("registro aceptado: no hay filtro");
+        TRACE();
         return 1;
     }
 
@@ -190,18 +191,22 @@ sub filtrarEstadoDeTarjeta {
 
     if ($xv != "*" and $xv ne $v) {
         TRACE("registro rechazado: vencimiento");
+        TRACE();
         return 0;
     }
     if ($xd != "*" and $xd ne $d) {
         TRACE("registro rechazado: denuncia");
+        TRACE();
         return 0;
     }
     if ($xb != "*" and $xb ne $b) {
         TRACE("registro rechazado: bloqueo");
+        TRACE();
         return 0;
     }
 
     TRACE("registro aceptado");
+    TRACE();
     return 1;
 }
 
