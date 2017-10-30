@@ -12,3 +12,5 @@ en Drive.
 | DEMONIO                          | pabloernesto                 | 2017-10-17 |
 | VALIDADOR                        | carlos                       | 2017-10-17 |
 | LISTADOR                         | roger                        | 2017-10-17 |
+
+link al informe ( README ) https://docs.google.com/document/d/1T9umCa18nFvadyVh4p3j4BK4PiS5qIZV4vGCbAfjWN8
