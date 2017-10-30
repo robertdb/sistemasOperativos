@@ -289,11 +289,13 @@ sub validar {
     chomp($filtro);
 
     TRACE("Filtro es ", $filtro);
-    if ($filtro eq "0") { return $filtro; }
-    if ($filtro eq "*") { return $filtro; }
+#    if ($filtro eq "0") { return $filtro; }
+#    if ($filtro eq "*") { return $filtro; }
 
     $incorrecto = 1;
     while ( $incorrecto == 1 ) {
+      if ($filtro eq "0") { return $filtro; }
+      if ($filtro eq "*") { return $filtro; }
         TRACE("entrando al loop");
 
         @array=split(',',$filtro);
@@ -321,7 +323,7 @@ sub validar {
 ### VALIDAR FILTROS
 
 
-$TRON = 1;
+$TRON = 0;
 
 
 $DIR_VALIDADOS = $ENV{"VALIDADOS"};
@@ -337,8 +339,10 @@ print "=====    LISTADOR: Modalidad Manual    =====\n\n";
 
 my $file_option = 9;
 my $dir_file_input;
+# VOLVER AL WHILE
+$opcionMenuPrincipal = 9;
 
-#while($file_option!=0){
+while($opcionMenuPrincipal!=0){
 	print "Opciones de input:\n\n";
 	print "1- Seleccionar un archivo específico\n";
 	print "2. Varios archivos\n";
@@ -350,6 +354,110 @@ my $dir_file_input;
 	$file_option = <STDIN>;
 
 	my @files_input = ();
+    if($file_option == 1){
+      $cantidad =0;
+      while ($cantidad == 0){
+        print "Ingrese un archivo de plasticos emitidos o de distribucion\n";
+        print "0 para salir y volver al menu anterior\n";
+
+        $archivoABuscar = <STDIN>;
+        chomp($archivoABuscar);
+        if ( $archivoABuscar eq 0 ){
+          $cantidad = 1;
+          $opcion_listado = 0;
+        }
+        else {
+  # Busco en validados
+        opendir(DIR, $DIR_VALIDADOS) or die $!;
+  		   @files = readdir(DIR);
+  		  closedir(DIR);
+          foreach my $file (@files) {
+
+      		next unless (-f "$DIR_VALIDADOS/$file");
+    #                print "$file\n";
+          if ( $archivoABuscar eq $file){
+      		  push @files_input, "$DIR_VALIDADOS/$file";
+            last;
+          }
+      	}
+        opendir(DIR, $DIR_REPORTES) or die $!;
+        @files = readdir(DIR);
+        closedir(DIR);
+        foreach my $file (@files) {
+    		    next unless (-f "$DIR_REPORTES/$file");
+  #          print "$file\n";
+            if ( $archivoABuscar eq $file){
+    		        push @files_input, "$DIR_REPORTES/$file";
+                last;
+        }
+     }
+    $cantidad = @files_input;
+  #  print "cantidad $cantidad\n";
+  #Si no lo encontro pide de nuevo
+   if ($cantidad == 1){
+     $opcion_listado =9;
+    }
+   }
+   }
+  }
+
+
+if($file_option == 2){
+  $cantidad =1;
+  $cantidadABuscar =0;
+  while ($cantidad != $cantidadABuscar) {
+    print "Ingrese nombre de archivos de plasticos emitidos o de distribucion\n";
+    print "Separados por coma, ej: archivo1.txt,archivo2.txt\n";
+    print "0 para salir y volver al menu anterior\n";
+
+    $archivoABuscar = <STDIN>;
+    chomp($archivoABuscar);
+    if ( $archivoABuscar eq 0 ){
+      $cantidad = $cantidadABuscar;
+      $opcion_listado = 0;
+    }
+    else {
+      @archivos = split(',',$archivoABuscar);
+
+# Busco en validados
+    opendir(DIR, $DIR_VALIDADOS) or die $!;
+     @files = readdir(DIR);
+    closedir(DIR);
+    foreach my $file (@files) {
+    next unless (-f "$DIR_VALIDADOS/$file");
+    foreach $archivoABuscar(@archivos){
+    if ( $archivoABuscar eq $file){
+      push @files_input, "$DIR_VALIDADOS/$file";
+      last;
+    }
+  }
+  }
+    opendir(DIR, $DIR_REPORTES) or die $!;
+    @files = readdir(DIR);
+    closedir(DIR);
+    foreach my $file (@files) {
+        next unless (-f "$DIR_REPORTES/$file");
+    foreach $archivoABuscar(@archivos){
+        if ( $archivoABuscar eq $file){
+            push @files_input, "$DIR_REPORTES/$file";
+            last;
+    }
+  }
+ }
+    $cantidad = @files_input;
+    $cantidadABuscar = @archivos;
+#    print "cantidad $cantidad\n";
+#    print "cantidad a buscar $cantidadABuscar\n";
+#Si no lo encontro pide de nuevo
+    if ($cantidad == $cantidadABuscar){
+      $opcion_listado =9;
+    }
+  }
+  }
+}
+
+
+
 
 	if($file_option == 3){
 		opendir(DIR, $DIR_VALIDADOS) or die $!;
@@ -360,7 +468,7 @@ my $dir_file_input;
 		next unless (-f "$DIR_VALIDADOS/$file");
 		push @files_input, "$DIR_VALIDADOS/$file";
 	}
-
+   $opcion_listado = 9;
 		#print "files_input: @files_input\n\n";
 	}
 
@@ -374,10 +482,16 @@ my $dir_file_input;
 				push @files_input, "$DIR_REPORTES/$file";
 			}
 		}
+   $opcion_listado = 9;
 		#print "files_input: @files_input\n\n";
 	}
+  if ($file_option == 0){
+    $opcion_listado =0 ;
+    $opcionMenuPrincipal = 0;
+    print "Fin del programa\n";
+  }
 
-my $opcion_listado=9;
+#my $opcion_listado=9;
 my $file_output_name = "";
 
 while($opcion_listado!=0){
@@ -390,7 +504,7 @@ while($opcion_listado!=0){
 	print "4. Listado de la situación de una cuenta en particular\n";
 	print "5. Listado de la situación de una tarjeta en particular\n\n";
 
-	print "0. SALIR\n\n";
+	print "0. Volver al menu anterior\n\n";
 
 	$opcion_listado = <STDIN>;
 	chomp $opcion_listado;
@@ -415,11 +529,11 @@ while($opcion_listado!=0){
 
 			# validacion de jia
 			$stringJia = validar();
-
 			#  YA ESTAN VALIDADOS LOS FILTROS
-
+      if ($stringJia eq "0"){
+        $opcion_filtrado = 0;
+      }
 			if($stringJia ne "0"){
-
 				%filtros=();
 
 				if ($stringJia ne "*") {
@@ -432,7 +546,7 @@ while($opcion_listado!=0){
 						$filtros{$key} = $value;
 					}
 				}
-
+#        print "Filtrado por $stringJia\n";
 				print "# inicio de proceso...\n\n";
 				search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
 				print  "# fin de proceso\n\n";
@@ -457,7 +571,9 @@ while($opcion_listado!=0){
 
 			# validacion de jia
 			$stringJia = validar();
-
+      if ($stringJia eq "0"){
+        $opcion_filtrado = 0;
+      }
 			#  YA ESTAN VALIDADOS LOS FILTROS
 
 			if($stringJia ne "0"){
@@ -495,7 +611,9 @@ while($opcion_listado!=0){
 
 			# validacion de jia
 			$stringJia = validar();
-
+      if ($stringJia eq "0"){
+        $opcion_filtrado = 0;
+      }
 			#  YA ESTAN VALIDADOS LOS FILTROS
 
 			if($stringJia ne "0"){
@@ -532,7 +650,9 @@ while($opcion_listado!=0){
 
 		# validacion de jia
 		$stringJia = validar();
-
+    if ($stringJia eq "0"){
+      $opcion_filtrado = 0;
+    }
 		#  YA ESTAN VALIDADOS LOS FILTROS
 
 		if($stringJia ne "0"){
@@ -573,7 +693,9 @@ while($opcion_listado!=0){
 
 			# validacion de jia
 			$stringJia = validar();
-
+      if ($stringJia eq "0"){
+        $opcion_filtrado = 0;
+      }
 			#  YA ESTAN VALIDADOS LOS FILTROS
 
 			if($stringJia ne "0"){
@@ -600,7 +722,7 @@ while($opcion_listado!=0){
 		}
 	}
 }
-
+}
 # genera los archivos de reportes según los archivos
 # y filtros pasados por parametro
 sub search_by_filters {
