@@ -490,7 +490,14 @@ if($file_option == 2){
     $opcionMenuPrincipal = 0;
     print "Fin del programa\n";
   }
-
+  if ($file_option == 5){
+    $opcion_listado =0 ;
+    print "-----------AYUDA-----------\n\n";
+    print "Buscador de listas por filtros de campos\n";
+    print "Seleccione opciones del menu y sigua las instrucciones\n";
+    print "Para los archivos a buscar, se pasan el nombre completo con .txt\n";
+    print "Para los filtros: se separan con ','\n";
+  }
 #my $opcion_listado=9;
 my $file_output_name = "";
 
@@ -535,7 +542,7 @@ while($opcion_listado!=0){
       }
 			if($stringJia ne "0"){
 				%filtros=();
-
+        print "Los filtros son de $stringJia\n";
 				if ($stringJia ne "*") {
 
 					@arr_filtros = split(',', $stringJia);
@@ -579,7 +586,7 @@ while($opcion_listado!=0){
 			if($stringJia ne "0"){
 
 				%filtros=();
-
+        print "Los filtros son de $stringJia\n";
 				if ($stringJia != "*") {
 					@arr_filtros = split(',', $stringJia);
 					foreach my $x (@arr_filtros) {
@@ -619,7 +626,7 @@ while($opcion_listado!=0){
 			if($stringJia ne "0"){
 
 				%filtros=();
-
+        print "Los filtros son de $stringJia\n";
 				if ($stringJia != "*") {
 					@arr_filtros = split(',', $stringJia);
 					foreach my $x (@arr_filtros) {
@@ -658,14 +665,14 @@ while($opcion_listado!=0){
 		if($stringJia ne "0"){
 
 			%filtros=();
-
+        print "Los filtros son de $stringJia\n";
 			if ($stringJia ne "*") {
 
 				@arr_filtros = split(',', $stringJia);
 				foreach my $x (@arr_filtros) {
 					$key = substr $x, 0, 1;
 					$value = substr $x, 1, ;
-					print "clave:$key valor:$value\n";
+#					print "clave:$key valor:$value\n";
 					$filtros{$key} = $value;
 				}
 			}
@@ -701,14 +708,14 @@ while($opcion_listado!=0){
 			if($stringJia ne "0"){
 
 				%filtros=();
-
+        print "Los filtros son de $stringJia\n";
 				if ($stringJia ne "*") {
 
 					@arr_filtros = split(',', $stringJia);
 					foreach my $x (@arr_filtros) {
 						$key = substr $x, 0, 1;
 						$value = substr $x, 1, ;
-						print "clave:$key valor:$value\n";
+#						print "clave:$key valor:$value\n";
 						$filtros{$key} = $value;
 					}
 				}
