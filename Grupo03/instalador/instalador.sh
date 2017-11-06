@@ -3,7 +3,7 @@
 ## --------- FUNCIONES -----------####
 
 chequearSistema () {
- mensaje "chequea sistema"
+# mensaje "chequea sistema"
 #retorna 0 si no esta instalado
  if [ -e "$GRUPO/dirconf/configuracion.conf" ]; then
     return 1
@@ -22,8 +22,9 @@ mensaje(){
 
 
 reparar(){
-  mensaje "Reparar"
+#  mensaje "Reparar"
   log "-$usuario-Instalador-INF-MODO REPARAR"
+  if [ -f "$GRUPO/dirconf/configuracion.conf" ]; then
   carpetasACrear=$(cut -d- -f 2 "$GRUPO/dirconf/configuracion.conf")
   contador=0
   while read -r line
@@ -39,6 +40,10 @@ reparar(){
    contador+=1
   done <<<"$carpetasACrear"
   mover
+  mensaje "Reparacion finalizada"
+  else
+    mensaje "No hay instalacion previa, nada para reparar"
+  fi
 }
 
 mover(){
@@ -67,13 +72,14 @@ instalacion(){
 
    confi "${carpetas[0]}" "${carpetas[1]}" "${carpetas[2]}" "${carpetas[3]}" "${carpetas[4]}" "${carpetas[5]}" "${carpetas[6]}"
    log "-$usuario-Instalador-INF-Creacion de configuracion.conf"
-   mensaje "deberia instalar"
+   mensaje "Instalacion completa"
+  log "-$usuario-Instalador-INF-Instalacion completa"
 # Creo los directorios
    for cosas in "${carpetas[@]}"; do
 #Esto despues borrarlo
      if [ ! -d "$cosas" ]; then
        log "-$usuario-Instalador-INF-Creacion del directorio: $cosas"
-       mkdir "$cosas"
+       mkdir -p "$cosas"
      fi
    done
    mover
@@ -81,8 +87,9 @@ instalacion(){
 
 }
 desinstalar(){
-  mensaje "Desinstalar sistema"
+  mensaje "Proceso de desinstalacion del sistema"
   log "-$usuario-Instalador-INF-Desinstalacion de sistema"
+  if [ -f "$GRUPO/dirconf/configuracion.conf" ]; then
   carpetasABorrar=$(cut -d- -f 2 "$GRUPO/dirconf/configuracion.conf")
   contador=0
   while read -r line
@@ -100,6 +107,10 @@ desinstalar(){
  mensaje "Borrar todo los logs de dirconf"
  log "-$usuario-Instalador-INF-Borrar logs de dirconf"
  rm "$GRUPO/dirconf/"*
+ mensaje "Desinstalacion finalizada"
+ else
+   mensaje "No hay instalacion previa, no desinstala"
+ fi
 }
 
 
@@ -140,11 +151,13 @@ chequeo=$?
 case "$1" in
 
  "-r")
+   mensaje "MODO: Reparacion del sistema"
    reparar
    log "-$usuario-Instalador-INF-REPARAR sistema"
    ;;
   "")
-
+  mensaje "MODO: Instalacion normal"
+  verificar_Perl
 if [ "$chequeo" == 0 ]; then
     mensaje "no esta instalado el sistema "
 #verificar esto
@@ -164,14 +177,15 @@ fi
 
   "-i")
 ##
-   mensaje "no reparo"
-   mensaje "Instalacion forzada"
+#   mensaje "no reparo"
+   mensaje "MODO: Instalacion forzada"
+   verificar_Perl
    log "-$usuario-Instalador-INF-Instalacion forzada"
    desinstalar
    instalacion
     ;;
   "-d")
-   mensaje "Desinstalacion de sistema"
+   mensaje "MODO: Desinstalacion de sistema"
    log "-$usuario-Instalador-INF-MODO DESINSTALACION"
    desinstalar
 
@@ -179,4 +193,3 @@ fi
 
 
 esac
-

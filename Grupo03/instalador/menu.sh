@@ -16,9 +16,8 @@ validar(){
 #	 esta=0
 #      fi
 #   done
-# fi 
+# fi
 #return $esta
-
 
 directorios=$(find "$GRUPO/" -type d)
 #echo $directorios
@@ -27,8 +26,16 @@ if [[ $2 == "dirconf/"* ]]; then
 #si quiere crear subdirectorio en dirconf, retorno 2
   esta=2
 else
+  if [ -z "$2" -a "$2" != " " ];then
+    esta=3
+    return $esta
+  fi
+  if [ "$2" = "0" ]; then
+    esta=3
+    return $esta
+  fi
  while read -r line
- do 
+ do
    carpeta=$(echo "$line" | sed s-"$GRUPO/"-""-g)
      if [ "$2" = "$carpeta" ]; then
 # Si esta repetido lo pongo en 0
@@ -46,7 +53,6 @@ else
       fi
    done
 fi
-
 return $esta
 
 }
@@ -57,10 +63,11 @@ nombrarDirectorio(){
  read opcion
  echo $opcion >> "$GRUPO/dirconf/salidaTerminal.log"
  if [ "$opcion" = "s" ]; then
-     mensaje "Ingrese nuevo directorio a partir de: $GRUPO"
-     mensaje "Ej: Nuevo Directorio"
-     mensaje "-----> $GRUPO/Nuevo Directorio"
-     read directorioNuevo
+#     mensaje "Ingrese nuevo directorio a partir de: $GRUPO"
+#     mensaje "Ej: Nuevo Directorio"
+#     mensaje "-----> $GRUPO/Nuevo Directorio"
+#     read directorioNuevo
+     read -p $"Defina el nuevo directorio de $1: $GRUPO/" -ei "" directorioNuevo
      echo $directorioNuevo >> "$GRUPO/dirconf/salidaTerminal.log"
      log "-$usuario-Instalador-INF-Informe nuevo directorio para $1"
      validar "$GRUPO/$directorioNuevo" $directorioNuevo $lugar
@@ -70,14 +77,14 @@ nombrarDirectorio(){
 #       carpetas[$2]="$GRUPO/$directorioNuevo"
 #       mensaje "Nuevo directorio para $1 creado: $GRUPO/$directorioNuevo"
 #       log "-$usuario-Instalador-INF-Nuevo Directorio para $1 en: $GRUPO/$directorioNuevo"
-#     else 
+#     else
 #	mensaje "ERROR: Ya existe un directorio con ese nombre"
 #	log "-$usuario-Instalador-ERROR-Ya existe un directorio con ese nombre $GRUPO/$directorioNuevo"
 #        nombrarDirectorio $1 $2
 #     fi
 
      case "$ret" in
-      0) 
+      0)
 	mensaje "ERROR: Ya existe un directorio con ese nombre"
 	log "-$usuario-Instalador-ERROR-Ya existe un directorio con ese nombre $GRUPO/$directorioNuevo"
         nombrarDirectorio $1 $2
@@ -85,13 +92,18 @@ nombrarDirectorio(){
       1)
        carpetas[$2]="$GRUPO/$directorioNuevo"
        mensaje "${carpetas[$2]}"
-       mensaje "Nuevo directorio para $1 creado: $GRUPO/$directorioNuevo"
+       mensaje "Nuevo directorio para $1 en: $GRUPO/$directorioNuevo"
        log "-$usuario-Instalador-INF-Nuevo Directorio para $1 en: $GRUPO/$directorioNuevo"
        ;;
       2)
 	mensaje "ERROR: dirconf es un nombre reservado, no se puede crear subdirectorios"
 	log "-$usuario-Instalador-ERROR-Ya existe un directorio con ese nombre $GRUPO/$directorioNuevo"
         nombrarDirectorio $1 $2
+       ;;
+       3)
+       mensaje "ERROR: debe ingresar el nombre de la carpeta"
+	     log "-$usuario-Instalador-ERROR-No ingreso nombre de carpeta"
+       nombrarDirectorio $1 $2
        ;;
       esac
 
@@ -102,8 +114,8 @@ nombrarDirectorio(){
 
 menu(){
 #nombres=("ejecutables" "maestros" "aceptados" "rechazados" "validados" "reportes" "logs")
-mensaje "------------------------------- MENU -----------------------------------" 
-mensaje "Seleccione una opcion para definir los directorios para la instalacion:" 
+mensaje "------------------------------- MENU -----------------------------------"
+mensaje "Seleccione una opcion para definir los directorios para la instalacion:"
 mensaje "1- Ejecutables"
 mensaje "2- Maestros"
 mensaje "3- Aceptados"
@@ -117,14 +129,14 @@ mensaje "Ingrese la letra C para salir sin instalar"
 read opcion
 echo $opcion >> "$GRUPO/dirconf/salidaTerminal.log"
 log "-$usuario-Instalador-INF-Elija opcion del menu"
-case $opcion in 
- [1-7]) 
+case $opcion in
+ [1-7])
    lugar=$(($opcion-1))
    nombrarDirectorio "${nombres[$lugar]}" $lugar
 #   mensaje "${carpetas[$lugar]}"
    menu
   ;;
- 8) 
+ 8)
   for ((i=0; i < 7;i++)); do
     mensaje "${nombres[$i]} a instalarse en: ${carpetas[$i]}"
   done
@@ -138,7 +150,7 @@ case $opcion in
  i)
   mensaje "proceso de instalacion"
   ;;
- *) 
+ *)
    clear
    mensaje "Opcion invalida"
    menu
