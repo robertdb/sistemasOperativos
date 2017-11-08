@@ -1,327 +1,8 @@
 #!/usr/bin/perl
 
-
-#funcions
-### FILTROS
-# Todas las subrutinas
-#   $registro (string) valor del registro como se encuentra en el
-#   \%filtros (hash) conjunto de filtros en los que
-#
-# Todas las funciones evaluan a verdadero si y solo si el
-# cumple con el filtro y debe ser aceptado.
-
-# Usa $filtros{"e"}, espera uno de los siguientes formatos:
-# undef: aceptar
-# ddd: aceptar sii nro_entidad ==
-# aaa-bbb: aceptar sii aaa <= nro_entidad <=
-sub filtrarEntidades {
-    my @reg = split(/;/, shift @_);
-    my $entidad = @reg[22];
-
-    my %filtros = %{shift @_};
-
-    TRACE("filtrando por entidad ", $entidad);
-
-    if (! exists $filtros{"e"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
-        return 1;
-    }
-
-    if (!( $filtros{"e"} =~ /^(...)(-(...))?$/ )) {
-        TRACE("registro rechazado: filtro mal formado ", $filtros{"e"});
-        TRACE();
-        return 0;
-    }
-
-    if ($entidad < $1) {
-        TRACE("registro rechazado: ", $entidad, "<", $1);
-        TRACE();
-        return 0;
-    }
-    if ($3 != undef && $3 < $entidad) {
-        TRACE("registro rechazado: ", $entidad, ">", $3);
-        TRACE();
-        return 0;
-    }
-    elsif ($3 == undef && $entidad != $1) {
-        TRACE("registro rechazado: ", $entidad, "!=", $1);
-        TRACE();
-        return 0;
-    }
-
-    TRACE("registro aceptado");
-    TRACE();
-    return 1;
-}
-
-# Usa $filtros{"f"}, espera uno de los siguientes formatos:
-# undef: aceptar
-# ddd: aceptar sii fuente es de la forma xxxxxxx_ddd.
-sub filtrarFuentes {
-    my @reg = split(/;/, shift @_);
-    my $fuente = @reg[0];
-
-    my %filtros = %{shift @_};
-
-    TRACE("filtrando por fuente ", $fuente);
-
-    if (! exists $filtros{"f"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
-        return 1;
-    }
-
-    $fuente =~ /.*_(\d\d\d).txt/;
-    if ($1 == $filtros{"f"}) {
-        TRACE("registro aceptado");
-        TRACE();
-        return 1;
-    }
-
-    TRACE("registro rechazado: ", $fuente, "!=", $1);
-    TRACE();
-    return 0;
-}
-
-# Usa $filtros{"d"}, espera uno de los siguientes formatos:
-# undef: aceptar
-# re: aceptar sii condicion =~ /re/
-sub filtrarCondicionesDeDistribucion {
-    my @reg = split(/;/, shift @_);
-    my $condicion = @reg[6];
-
-    my %filtros = %{shift @_};
-
-    TRACE("filtrando por condicion de distribucion ", $condicion);
-
-    if (! exists $filtros{"d"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
-        return 1;
-    }
-
-
-    if ($condicion =~ /$filtros{"d"}/) {
-        TRACE("registro aceptado");
-        TRACE();
-        return 1;
-    }
-
-    TRACE("registro rechazado: ", $condicion, " no matchea ", $filtros{"d"});
-    TRACE();
-    return 0;
-}
-
-# Usa $filtros{"t"}, espera uno de los siguientes formatos:
-# undef: aceptar
-# re: aceptar sii tarjeta =~ /re/
-sub filtrarTarjetas {
-    my @reg = split(/;/, shift @_);
-    my $tarjeta = @reg[9];
-
-    my %filtros = %{shift @_};
-
-    TRACE("filtrando por tarjeta ", $tarjeta);
-
-    if (! exists $filtros{"t"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
-        return 1;
-    }
-
-    if ($tarjeta =~ /$filtros{"t"}/) {
-        TRACE("registro aceptado");
-        TRACE();
-        return 1;
-    }
-
-    TRACE("registro rechazado: ", $tarjeta, " no matchea ", $filtros{"t"});
-    TRACE();
-    return 0;
-}
-
-# Usa $filtros{"c"}, espera uno de los siguientes formatos:
-# undef: aceptar
-# re: aceptar sii cuenta =~ /re/
-sub filtrarCuentas {
-    my @reg = split(/;/, shift @_);
-    my $cuenta = @reg[17];
-
-    my %filtros = %{shift @_};
-
-    TRACE("filtrando por cuenta ", $cuenta);
-
-    if (! exists $filtros{"c"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
-        return 1;
-    }
-
-    if ($cuenta =~ /$filtros{"c"}/) {
-        TRACE("registro aceptado");
-        TRACE();
-        return 1;
-    }
-
-    TRACE("registro rechazado: ", $cuenta, " no matchea ", $filtros{"c"});
-    TRACE();
-    return 0;
-}
-
-# Usa $filtros{"T"}, espera uno de los siguientes formatos:
-# undef: aceptar todo
-# lista_de_estados: aceptar sii el estado de la tarjeta
-#   corresponde a la lista solicitada. Un estado en minuscula
-#   significa que el campo debe estar seteado (eg: "d" significa que
-#   la tarjeta debe estar denunciada) Un estado en mayuscula
-#   significa que el campo de no estar seteado (eg: "D" significa que
-#   la tarjeta no debe estar denunciada)
-#
-#   En caso en que un estado (o dos estados contradictorios) aparezca
-#   mas de una vez, la primera instancia toma precedencia
-#   (eg: en "dBvD" la tarjeta debe estar denunciada para corresponder
-#   al filtro)
-#
-# EBNF
-#   lista_de_estados = { denunciada | bloqueada | vencida }
-#   denunciada = [ "d" | "D" ]
-#   bloqueada = [ "b" | "B" ]
-#   vencida = [ "v" | "V" ]
-sub filtrarEstadoDeTarjeta {
-    my @reg = split(/;/, shift @_);
-    my @estado = @reg[3..5];
-
-    my %filtros = %{shift @_};
-
-    TRACE("filtrando por estado de tarjeta ", @estado);
-
-    if (! exists $filtros{"T"}) {
-        TRACE("registro aceptado: no hay filtro");
-        return 1;
-    }
-
-    my $v = @estado[0];
-    my $d = @estado[1];
-    my $b = @estado[2];
-
-    my $xv = "*";
-    my $xd = "*";
-    my $xb = "*";
-
-    my $filtro = $filtros{"T"};
-    my $temp;
-    while ( ($temp = chop($filtro)) ne "" ) {
-        if ($temp eq "v") { $xv = 1; }
-        elsif ($temp eq "V") { $xv = 0; }
-        elsif ($temp eq "d") { $xd = 1; }
-        elsif ($temp eq "D") { $xd = 0; }
-        elsif ($temp eq "b") { $xb = 1; }
-        elsif ($temp eq "B") { $xb = 0; }
-    }
-    TRACE("filtro: ", $xv, $xd, $xb);
-
-    if ($xv != "*" and $xv ne $v) {
-        TRACE("registro rechazado: vencimiento");
-        return 0;
-    }
-    if ($xd != "*" and $xd ne $d) {
-        TRACE("registro rechazado: denuncia");
-        return 0;
-    }
-    if ($xb != "*" and $xb ne $b) {
-        TRACE("registro rechazado: bloqueo");
-        return 0;
-    }
-
-    TRACE("registro aceptado");
-    return 1;
-}
-
-# Usa $filtros{"C"}, espera uno de los siguientes formatos:
-# undef: aceptar todo
-# lista_de_estados: aceptar sii el estado de la tarjeta es uno de
-#   los estados solicitados
-#
-#   Los estados
-#
-# EBNF
-#   lista_de_estados = estado { "-" lista_de_estados }
-#
-# estado es un prefijo case-insensitive (eg: act, a, ACTIVA, y Act, todas
-#   matchean ACTIVA)
-sub filtrarEstadoDeCuenta {
-    my @reg = split(/;/, shift @_);
-    my $estado = @reg[2];
-
-    my %filtros = %{shift @_};
-
-    TRACE("filtrando por estado de cuenta ", $estado);
-
-    if (! exists $filtros{"C"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
-        return 1;
-    }
-
-    TRACE("filtro: ", $filtros{"C"});
-    my @f = split(/-/, $filtros{"C"});
-    foreach $e (@f) {
-        $e = uc($e);
-        $estado = uc($estado);
-        if ($e eq substr($estado, 0, length($e))) {
-            TRACE("registro aceptado");
-            TRACE();
-            return 1;
-        }
-    }
-
-    TRACE("registro rechazado");
-    TRACE();
-    return 0;
-}
-
-### FILTROS
-
-### VALIDAR FILTROS
-sub validar {
-    $filtro = <STDIN>;
-    chomp($filtro);
-
-    TRACE("Filtro es ", $filtro);
-#    if ($filtro eq "0") { return $filtro; }
-#    if ($filtro eq "*") { return $filtro; }
-
-    $incorrecto = 1;
-    while ( $incorrecto == 1 ) {
-      if ($filtro eq "0") { return $filtro; }
-      if ($filtro eq "*") { return $filtro; }
-        TRACE("entrando al loop");
-
-        @array=split(',',$filtro);
-        $hayIncorrecto = 0;
-        foreach $cosa (@array) {
-            TRACE("foreach: ", $cosa);
-            if ( $cosa =~ /^[c,t,d,e,f,T].*/) {
-            } else {
-                $hayIncorrecto = 1;
-                last;
-            }
-        }
-
-        if ($hayIncorrecto eq 1) {
-            print "Error: modo de filtro invalido, reingrese\n";
-            $filtro = <STDIN>;
-            chomp($filtro);
-        } else {
-            $incorrecto = 0;
-        }
-    }
-    return $filtro;
-}
-
-### VALIDAR FILTROS
-
+use lib ".";
+use Filtros;
+use Tron;
 
 $TRON = 0;
 
@@ -535,7 +216,7 @@ while($opcion_listado!=0){
 			print "0 - volver al menu anterior\n\n";
 
 			# validacion de jia
-			$stringJia = validar();
+			$stringJia = Filtros::validar();
 			#  YA ESTAN VALIDADOS LOS FILTROS
       if ($stringJia eq "0"){
         $opcion_filtrado = 0;
@@ -577,7 +258,7 @@ while($opcion_listado!=0){
 
 
 			# validacion de jia
-			$stringJia = validar();
+			$stringJia = Filtros::validar();
       if ($stringJia eq "0"){
         $opcion_filtrado = 0;
       }
@@ -617,7 +298,7 @@ while($opcion_listado!=0){
 
 
 			# validacion de jia
-			$stringJia = validar();
+			$stringJia = Filtros::validar();
       if ($stringJia eq "0"){
         $opcion_filtrado = 0;
       }
@@ -656,7 +337,7 @@ while($opcion_listado!=0){
 		print "0 - volver al menu anterior\n\n";
 
 		# validacion de jia
-		$stringJia = validar();
+		$stringJia = Filtros::validar();
     if ($stringJia eq "0"){
       $opcion_filtrado = 0;
     }
@@ -699,7 +380,7 @@ while($opcion_listado!=0){
 			print "0 - volver al menu anterior\n\n";
 
 			# validacion de jia
-			$stringJia = validar();
+			$stringJia = Filtros::validar();
       if ($stringJia eq "0"){
         $opcion_filtrado = 0;
       }
@@ -771,44 +452,44 @@ sub search_by_filters {
 
 
 		while ($row=<ENTRADA>) {
-			TRACE("procesando linea: ", substr($row, 0, 50));
+			Tron::TRACE("procesando linea: ", substr($row, 0, 50));
 
-			if (!filtrarEntidades($row,\%filters)) {
-				TRACE("entidades rechaza");
+			if (!Filtros::filtrarEntidades($row,\%filters)) {
+				Tron::TRACE("entidades rechaza");
 				next;
 			}
 
-			if (!filtrarFuentes ($row,\%filters)) {
-				TRACE("fuente rechaza");
+			if (!Filtros::filtrarFuentes ($row,\%filters)) {
+				Tron::TRACE("fuente rechaza");
 				next;
 			}
 
-			if (!filtrarCondicionesDeDistribucion($row,\%filters)) {
-				TRACE("cond de distribucion rechaza");
+			if (!Filtros::filtrarCondicionesDeDistribucion($row,\%filters)) {
+				Tron::TRACE("cond de distribucion rechaza");
 				next;
 			}
 
-			if (!filtrarTarjetas($row,\%filters)) {
-				TRACE("tarjeta rechaza");
+			if (!Filtros::filtrarTarjetas($row,\%filters)) {
+				Tron::TRACE("tarjeta rechaza");
 				next;
 			}
 
-			if (!filtrarCuentas ($row,\%filters)) {
-				TRACE("cuenta rechaza");
+			if (!Filtros::filtrarCuentas ($row,\%filters)) {
+				Tron::TRACE("cuenta rechaza");
 				next;
 			}
 
-			if (!filtrarEstadoDeTarjeta ($row,\%filters)) {
-				next;
-			}
-
-
-			if (!filtrarEstadoDeCuenta ($row,\%filters)) {
+			if (!Filtros::filtrarEstadoDeTarjeta ($row,\%filters)) {
 				next;
 			}
 
 
-			TRACE("registro correcto:$row");
+			if (!Filtros::filtrarEstadoDeCuenta ($row,\%filters)) {
+				next;
+			}
+
+
+			Tron::TRACE("registro correcto:$row");
 			print SALIDA $row;
 
 
@@ -823,12 +504,4 @@ sub search_by_filters {
 	}
 
 
-}
-
-
-sub TRACE {
-    if (! $TRON) { return; }
-
-    foreach $x (@_) { print $x; }
-    print "\n";
 }

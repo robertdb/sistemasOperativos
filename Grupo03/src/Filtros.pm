@@ -1,3 +1,47 @@
+package Filtros;
+
+use lib ".";
+use Tron;
+
+validar();
+# c,t,d,e,f
+# e puede venir con rango
+sub validar {
+    print "Ingrese el filtro, manera c20,e20-323,f20,t2020\n";
+    print "O ingrese * para TODOS \n";
+    $filtro = <STDIN>;
+    chomp($filtro);
+
+    Tron::TRACE("Filtro es ", $filtro);
+    if ($filtro eq "0") { return $filtro; }
+    if ($filtro eq "*") { return $filtro; }
+
+    $incorrecto = 1;
+    while ( $incorrecto == 1 ) {
+        Tron::TRACE("entrando al loop");
+
+        @array=split(',',$filtro);
+        $hayIncorrecto = 0;
+        foreach $cosa (@array) {
+            Tron::TRACE("foreach: ", $cosa);
+            if ( $cosa =~ /^[c,t,d,e,f,T,C].*/) {
+            } else {
+                $hayIncorrecto = 1;
+                last;
+            }
+        }
+
+        if ($hayIncorrecto eq 1) {
+            print "Error: modo de filtro invalido, reingrese\n";
+            $filtro = <STDIN>;
+            chomp($filtro);
+        } else {
+            $incorrecto = 0;
+        }
+    }
+    return $filtro;
+}
+
 # Todas las subrutinas
 #   $registro (string) valor del registro como se encuentra en el
 #   \%filtros (hash) conjunto de filtros en los que
@@ -15,38 +59,38 @@ sub filtrarEntidades {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por entidad ", $entidad);
+    Tron::TRACE("filtrando por entidad ", $entidad);
 
     if (! exists $filtros{"e"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
+        Tron::TRACE("registro aceptado: no hay filtro");
+        Tron::TRACE();
         return 1;
     }
 
     if (!( $filtros{"e"} =~ /^(...)(-(...))?$/ )) {
-        TRACE("registro rechazado: filtro mal formado ", $filtros{"e"});
-        TRACE();
+        Tron::TRACE("registro rechazado: filtro mal formado ", $filtros{"e"});
+        Tron::TRACE();
         return 0;
     }
 
     if ($entidad < $1) {
-        TRACE("registro rechazado: ", $entidad, "<", $1);
-        TRACE();
+        Tron::TRACE("registro rechazado: ", $entidad, "<", $1);
+        Tron::TRACE();
         return 0;
     }
     if ($3 != undef && $3 < $entidad) {
-        TRACE("registro rechazado: ", $entidad, ">", $3);
-        TRACE();
+        Tron::TRACE("registro rechazado: ", $entidad, ">", $3);
+        Tron::TRACE();
         return 0;
     }
     elsif ($3 == undef && $entidad != $1) {
-        TRACE("registro rechazado: ", $entidad, "!=", $1);
-        TRACE();
+        Tron::TRACE("registro rechazado: ", $entidad, "!=", $1);
+        Tron::TRACE();
         return 0;
     }
 
-    TRACE("registro aceptado");
-    TRACE();
+    Tron::TRACE("registro aceptado");
+    Tron::TRACE();
     return 1;
 }
 
@@ -59,23 +103,23 @@ sub filtrarFuentes {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por fuente ", $fuente);
+    Tron::TRACE("filtrando por fuente ", $fuente);
 
     if (! exists $filtros{"f"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
+        Tron::TRACE("registro aceptado: no hay filtro");
+        Tron::TRACE();
         return 1;
     }
 
     $fuente =~ /.*_(\d\d\d).txt/;
     if ($1 == $filtros{"f"}) {
-        TRACE("registro aceptado");
-        TRACE();
+        Tron::TRACE("registro aceptado");
+        Tron::TRACE();
         return 1;
     }
 
-    TRACE("registro rechazado: ", $fuente, "!=", $1);
-    TRACE();
+    Tron::TRACE("registro rechazado: ", $fuente, "!=", $1);
+    Tron::TRACE();
     return 0;
 }
 
@@ -88,23 +132,23 @@ sub filtrarCondicionesDeDistribucion {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por condicion de distribucion ", $condicion);
+    Tron::TRACE("filtrando por condicion de distribucion ", $condicion);
 
     if (! exists $filtros{"d"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
+        Tron::TRACE("registro aceptado: no hay filtro");
+        Tron::TRACE();
         return 1;
     }
 
 
     if ($condicion =~ /$filtros{"d"}/) {
-        TRACE("registro aceptado");
-        TRACE();
+        Tron::TRACE("registro aceptado");
+        Tron::TRACE();
         return 1;
     }
 
-    TRACE("registro rechazado: ", $condicion, " no matchea ", $filtros{"d"});
-    TRACE();
+    Tron::TRACE("registro rechazado: ", $condicion, " no matchea ", $filtros{"d"});
+    Tron::TRACE();
     return 0;
 }
 
@@ -117,22 +161,22 @@ sub filtrarTarjetas {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por tarjeta ", $tarjeta);
+    Tron::TRACE("filtrando por tarjeta ", $tarjeta);
 
     if (! exists $filtros{"t"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
+        Tron::TRACE("registro aceptado: no hay filtro");
+        Tron::TRACE();
         return 1;
     }
 
     if ($tarjeta =~ /$filtros{"t"}/) {
-        TRACE("registro aceptado");
-        TRACE();
+        Tron::TRACE("registro aceptado");
+        Tron::TRACE();
         return 1;
     }
 
-    TRACE("registro rechazado: ", $tarjeta, " no matchea ", $filtros{"t"});
-    TRACE();
+    Tron::TRACE("registro rechazado: ", $tarjeta, " no matchea ", $filtros{"t"});
+    Tron::TRACE();
     return 0;
 }
 
@@ -161,11 +205,11 @@ sub filtrarEstadoDeTarjeta {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por estado de tarjeta ", @estado);
+    Tron::TRACE("filtrando por estado de tarjeta ", @estado);
 
     if (! exists $filtros{"T"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
+        Tron::TRACE("registro aceptado: no hay filtro");
+        Tron::TRACE();
         return 1;
     }
 
@@ -187,26 +231,26 @@ sub filtrarEstadoDeTarjeta {
         elsif ($temp eq "b") { $xb = 1; }
         elsif ($temp eq "B") { $xb = 0; }
     }
-    TRACE("filtro: ", $xv, $xd, $xb);
+    Tron::TRACE("filtro: ", $xv, $xd, $xb);
 
     if ($xv != "*" and $xv ne $v) {
-        TRACE("registro rechazado: vencimiento");
-        TRACE();
+        Tron::TRACE("registro rechazado: vencimiento");
+        Tron::TRACE();
         return 0;
     }
     if ($xd != "*" and $xd ne $d) {
-        TRACE("registro rechazado: denuncia");
-        TRACE();
+        Tron::TRACE("registro rechazado: denuncia");
+        Tron::TRACE();
         return 0;
     }
     if ($xb != "*" and $xb ne $b) {
-        TRACE("registro rechazado: bloqueo");
-        TRACE();
+        Tron::TRACE("registro rechazado: bloqueo");
+        Tron::TRACE();
         return 0;
     }
 
-    TRACE("registro aceptado");
-    TRACE();
+    Tron::TRACE("registro aceptado");
+    Tron::TRACE();
     return 1;
 }
 
@@ -219,22 +263,22 @@ sub filtrarCuentas {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por cuenta ", $cuenta);
+    Tron::TRACE("filtrando por cuenta ", $cuenta);
 
     if (! exists $filtros{"c"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
+        Tron::TRACE("registro aceptado: no hay filtro");
+        Tron::TRACE();
         return 1;
     }
 
     if ($cuenta =~ /$filtros{"c"}/) {
-        TRACE("registro aceptado");
-        TRACE();
+        Tron::TRACE("registro aceptado");
+        Tron::TRACE();
         return 1;
     }
 
-    TRACE("registro rechazado: ", $cuenta, " no matchea ", $filtros{"c"});
-    TRACE();
+    Tron::TRACE("registro rechazado: ", $cuenta, " no matchea ", $filtros{"c"});
+    Tron::TRACE();
     return 0;
 }
 # Usa $filtros{"C"}, espera uno de los siguientes formatos:
@@ -255,27 +299,29 @@ sub filtrarEstadoDeCuenta {
 
     my %filtros = %{shift @_};
 
-    TRACE("filtrando por estado de cuenta ", $estado);
+    Tron::TRACE("filtrando por estado de cuenta ", $estado);
 
     if (! exists $filtros{"C"}) {
-        TRACE("registro aceptado: no hay filtro");
-        TRACE();
+        Tron::TRACE("registro aceptado: no hay filtro");
+        Tron::TRACE();
         return 1;
     }
 
-    TRACE("filtro: ", $filtros{"C"});
+    Tron::TRACE("filtro: ", $filtros{"C"});
     my @f = split(/-/, $filtros{"C"});
     foreach $e (@f) {
         $e = uc($e);
         $estado = uc($estado);
         if ($e eq substr($estado, 0, length($e))) {
-            TRACE("registro aceptado");
-            TRACE();
+            Tron::TRACE("registro aceptado");
+            Tron::TRACE();
             return 1;
         }
     }
 
-    TRACE("registro rechazado");
-    TRACE();
+    Tron::TRACE("registro rechazado");
+    Tron::TRACE();
     return 0;
 }
+
+1;
