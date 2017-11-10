@@ -260,22 +260,23 @@ do
 			fechaf=$aux4$aux2$aux;
 			if [[ ! $fechadesde =~ ^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$ ]];
 			then
-				rechazados "ERROR: fecha con formato incorrecto"
+				rechazados "ERROR: fecha 1 con formato incorrecto"
 				let aceptado=1;
-			fi
-			fechahasta="$aux/$aux2/$aux4";
-			if [[ $fechahasta =~ ^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$ ]];
-			then
+			else
+				fechahasta="$aux/$aux2/$aux4";
+				if [[ ! $fechahasta =~ ^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$ ]];
+				then
+				rechazados "ERROR: fecha 2 con formato incorrecto"
+				let aceptado=1;
+				else
 				DIFERENCIA=$(( ($(date --date $fechaf +%s) - $(date --date $fechainicial +%s) )/(60*60*24) ))
-			if [ $DIFERENCIA -lt 0 ]; then
-				rechazados "ERROR: la fecha inicial es mayor que la final"
-				let aceptado=1;
+					if [ $DIFERENCIA -lt 0 ]; then
+						rechazados "ERROR: la fecha inicial es mayor que la final"
+						let aceptado=1;
+					fi
+				fi
 			fi
-		else
-			rechazados "ERROR: fecha con formato incorrecto"
-			let aceptado=1;
-		fi
-
+		
 		nombredeinput="$arch";
   ## si el registro es aceptado se graba la salidaOk
 		if [ $aceptado -eq 0 ]; then
