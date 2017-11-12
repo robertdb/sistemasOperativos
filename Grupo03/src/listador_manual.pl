@@ -38,41 +38,34 @@ while($opcionMenuPrincipal!=0) {
     if($file_option == 1) {
         $cantidad =0;
         while ($cantidad == 0) {
-            print "Ingrese un archivo de plasticos emitidos o de distribucion\n";
+            print "Ingrese un nombre de archivo\n";
+            print "    (eg: plasticos_emitidos_000.txt, ",
+                  "plasticos_distribucion_sec001.txt)\n";
             print "0 para salir y volver al menu anterior\n";
 
             $archivoABuscar = <STDIN>;
             chomp($archivoABuscar);
+
+            # Salgo si input es 0
             if ( $archivoABuscar eq 0 ) {
                 $cantidad = 1;
                 $opcion_listado = 0;
-            } else {
-                # Busco en validados
-                opendir(DIR, $DIR_VALIDADOS) or die $!;
-                @files = readdir(DIR);
-                closedir(DIR);
-                foreach my $file (@files) {
-                    next unless (-f "$DIR_VALIDADOS/$file");
-                    if ( $archivoABuscar eq $file){
-                        push @files_input, "$DIR_VALIDADOS/$file";
-                        last;
-                    }
-                }
-                opendir(DIR, $DIR_REPORTES) or die $!;
-                @files = readdir(DIR);
-                closedir(DIR);
-                foreach my $file (@files) {
-                    next unless (-f "$DIR_REPORTES/$file");
-                    if ( $archivoABuscar eq $file){
-                        push @files_input, "$DIR_REPORTES/$file";
-                        last;
-                    }
-                }
-                $cantidad = @files_input;
-                # Si no lo encontro pide de nuevo
-                if ($cantidad == 1){
-                    $opcion_listado =9;
-                }
+                next
+            }
+
+            # Busco el archivo en validados y reportes
+            if (-f "$DIR_VALIDADOS/$archivoABuscar") {
+                push @files_input, "$DIR_VALIDADOS/$archivoABuscar";
+            }
+            if (-f "$DIR_REPORTES/$archivoABuscar") {
+                push @files_input, "$DIR_REPORTES/$archivoABuscar";
+            }
+
+            $cantidad = @files_input;
+
+            # Si no lo encontro pide de nuevo
+            if ($cantidad == 1){
+                $opcion_listado =9;
             }
         }
     }
