@@ -56,7 +56,7 @@ mover(){
     done <<<"$textos"
 
 
-    ejecutables=$(find "$GRUPO/src" -type f -iname "*.sh" -o -iname "*.pl")
+    ejecutables=$(find "$GRUPO/src" -type f -iname "*.sh" -o -iname "*.pl" -o -iname "*.pm")
     while read -r line
     do
         cp "$line" "${carpetas[0]}" 2>/dev/null
