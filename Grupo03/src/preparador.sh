@@ -55,3 +55,4 @@ find "$EJECUTABLES" -type f -exec chmod u+x {} +
 
 $EJECUTABLES/demonio.sh &
 export PID_DEMONIO=$!
+echo "Demonio iniciado con id de proceso $PID_DEMONIO"
