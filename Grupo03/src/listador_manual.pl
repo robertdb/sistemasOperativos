@@ -75,8 +75,9 @@ while($opcionMenuPrincipal!=0) {
         $cantidad =1;
         $cantidadABuscar =0;
         while ($cantidad != $cantidadABuscar) {
-            print "Ingrese nombre de archivos de plasticos emitidos o de distribucion\n";
-            print "Separados por coma, ej: archivo1.txt,archivo2.txt\n";
+            print "Ingrese uno o mas nombres de archivos, separados por coma\n",
+                  "    (eg: plasticos_emitidos_000.txt,",
+                  "plasticos_distribucion_sec001.txt\n";
             print "0 para salir y volver al menu anterior\n";
 
             $archivoABuscar = <STDIN>;
