@@ -3,7 +3,6 @@ package Filtros;
 use lib ".";
 use Tron;
 
-validar();
 # c,t,d,e,f
 # e puede venir con rango
 sub validar {
