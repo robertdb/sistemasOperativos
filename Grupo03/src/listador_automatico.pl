@@ -56,7 +56,7 @@ my $list;
 my $cond_dist;
 my $cantidad = 0;
 while ($row=<ENTRADA>){
-	 next if $. == 1; # salteamos la descripcion de las columnas
+	
 
 	@list = split( /(;)/, $row);
 
