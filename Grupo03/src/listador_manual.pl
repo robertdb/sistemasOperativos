@@ -154,11 +154,37 @@ while($opcionMenuPrincipal!=0) {
     }
     if ($file_option == 5){
         $opcion_listado =0 ;
-        print "-----------AYUDA-----------\n\n";
-        print "Buscador de listas por filtros de campos\n";
-        print "Seleccione opciones del menu y sigua las instrucciones\n";
-        print "Para los archivos a buscar, se pasan el nombre completo con .txt\n";
-        print "Para los filtros: se separan con ','\n";
+        print "Los nombres de archivos deben ingresarse completos, con extencion incluida\n",
+              "    eg: plasticos_emitidos_000.txt\n",
+              "\n",
+              "Sintaxis de los filtros, en Forma Backus-Naur Extendida (EBNF)\n",
+              "    entidades = \"e\", codigo, [ \"-\", codigo ];\n",
+              "    codigo = 3 * numero;\n",
+              "    numero = \"0\" | \"1\" | \"2\" | \"3\" | \"4\" | \"5\" | \"6\" | \"7\" | \"8\" | \"9\";\n",
+              "\n",
+              "    fuentes = \"f\", codigo;\n",
+              "    codigo = 3 * numero;\n",
+              "    numero = \"0\" | \"1\" | \"2\" | \"3\" | \"4\" | \"5\" | \"6\" | \"7\" | \"8\" | \"9\";\n",
+              "\n",
+              "    condiciones_de_distribucion = \"d\", condicion;\n",
+              "    condicion = \"no\" | \"urg\" | \"retener\" | \"estandar\";\n",
+              "\n",
+              "    tarjetas = \"t\", sub;\n",
+              "    sub = ? cadena de caracteres a buscar en documento tarjeta ?;\n",
+              "\n",
+              "    estado_tarjeta = \"T\", lista_de_estados;\n",
+              "    lista_de_estados = { denunciada | bloqueada | vencida };\n",
+              "    denunciada = [ \"d\" | \"D\" ];\n",
+              "    bloqueada = [ \"b\" | \"B\" ];\n",
+              "    vencida = [ \"v\" | \"V\" ];\n",
+              "\n",
+              "    cuentas = \"c\", sub;\n",
+              "    sub = ? cadena de caracteres a buscar en documento cuenta ?;\n",
+              "\n",
+              "    estado_cuenta = \"C\", lista_de_estados;\n",
+              "    lista_de_estados = estado, { \"-\", lista_de_estados }\n",
+              "    estado = \"ACT\" | \"BAJA\" | \"CTX\" | \"JUD\";\n",
+              "\n";
     }
     my $file_output_name = "";
 

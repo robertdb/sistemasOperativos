@@ -41,11 +41,11 @@ sub validar {
     return $filtro;
 }
 
-# Todas las subrutinas
-#   $registro (string) valor del registro como se encuentra en el
-#   \%filtros (hash) conjunto de filtros en los que
+# Todas las subrutinas aceptan los siguientes argumentos
+#   $registro (string) linea del archivo a filtrar
+#   \%filtros (hash) configuracion a pasar a los filtros
 #
-# Todas las funciones evaluan a verdadero si y solo si el
+# Todas las funciones evaluan a verdadero si y solo si el registro
 # cumple con el filtro y debe ser aceptado.
 
 # Usa $filtros{"e"}, espera uno de los siguientes formatos:
