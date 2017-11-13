@@ -188,7 +188,6 @@ while($opcionMenuPrincipal!=0) {
     }
     my $file_output_name = "";
 
-    $stringJia = Filtros::validar();
     while ($opcion_listado != 0) {
 
         print "=== elija por que criterio listar:\n\n";
@@ -213,6 +212,7 @@ while($opcionMenuPrincipal!=0) {
                 print "Ingrese 0 para volver al menu anterior\n\n";
 
                 # Obtener filtros, parsearlos, filtrar e imprimir
+                $stringJia = Filtros::validar();
                 if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
                 } else {
@@ -240,6 +240,7 @@ while($opcionMenuPrincipal!=0) {
                 print "Ingrese 0 para volver al menu anterior\n\n";
 
                 # Obtener filtros, parsearlos, filtrar e imprimir
+                $stringJia = Filtros::validar();
                 if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
                 } else {
@@ -265,6 +266,7 @@ while($opcionMenuPrincipal!=0) {
                 print "Ingrese 0 para volver al menu anterior\n\n";
 
                 # Obtener filtros, parsearlos, filtrar e imprimir
+                $stringJia = Filtros::validar();
                 if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
                 } else {
@@ -290,6 +292,7 @@ while($opcionMenuPrincipal!=0) {
                 print "Ingrese 0 para volver al menu anterior\n\n";
 
                 # Obtener filtros, parsearlos, filtrar e imprimir
+                $stringJia = Filtros::validar();
                 if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
                 } else {
@@ -315,6 +318,7 @@ while($opcionMenuPrincipal!=0) {
                 print "Ingrese 0 para volver al menu anterior\n\n";
 
                 # Obtener filtros, parsearlos, filtrar e imprimir
+                $stringJia = Filtros::validar();
                 if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
                 } else {
