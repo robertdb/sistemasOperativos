@@ -79,16 +79,17 @@ contar=0;
 encontro=0;
 #oldIFS=$IFS;
 #IFS=$'\n';
-for linea in $(cat $MAESTROS/tx_tarjetas)
+while read -r linea 
+#for linea in $(cat $MAESTROS/tx_tarjetas)
 do
 	#linea=$(echo -e "$line\n");
 	cuenta=$(echo "$linea" | cut -d ';' -f2);
 	if [ $contador -gt 0 ]; then
-		if [ $1 = $cuenta ]; then
+		if [[ $1 = $cuenta ]]; then
 			denunciada=$(echo "$linea" | cut -d ';' -f11);
 			bloqueada=$(echo "$linea" | cut -d ';' -f12);
 			VIEJA=$(echo "$linea" | cut -d ';' -f13);
-			contar=$contador
+			contar=$contador	
 			encontro=1;
 			((contar++))
 		fi
@@ -99,7 +100,7 @@ if [ $encontro -eq 1 ]; then
 	break; 
 	fi
 fi
-done 
+done < $MAESTROS/tx_tarjetas
 			
 }	
 ##### si algun registro falta informacion o esta mal formado va ######
