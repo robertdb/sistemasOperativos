@@ -6,8 +6,6 @@ use Tron;
 # c,t,d,e,f
 # e puede venir con rango
 sub validar {
-    print "Ingrese el filtro, manera c20,e20-323,f20,t2020\n";
-    print "O ingrese * para TODOS \n";
     $filtro = <STDIN>;
     chomp($filtro);
 

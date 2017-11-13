@@ -167,7 +167,7 @@ while($opcionMenuPrincipal!=0) {
               "    numero = \"0\" | \"1\" | \"2\" | \"3\" | \"4\" | \"5\" | \"6\" | \"7\" | \"8\" | \"9\";\n",
               "\n",
               "    condiciones_de_distribucion = \"d\", condicion;\n",
-              "    condicion = \"no\" | \"urg\" | \"retener\" | \"estandar\";\n",
+              "    condicion = \"NO\" | \"URG\" | \"RETENER\" | \"ESTANDAR\";\n",
               "\n",
               "    tarjetas = \"t\", sub;\n",
               "    sub = ? cadena de caracteres a buscar en documento tarjeta ?;\n",
@@ -188,15 +188,16 @@ while($opcionMenuPrincipal!=0) {
     }
     my $file_output_name = "";
 
+    $stringJia = Filtros::validar();
     while ($opcion_listado != 0) {
 
-        print "=== selecciones la opción de listado:\n\n";
+        print "=== elija por que criterio listar:\n\n";
 
-        print "1- Listado de cuentas\n";
-        print "2. Listados de tarjetas\n";
-        print "3. Listado de condición de distribución\n";
-        print "4. Listado de la situación de una cuenta en particular\n";
-        print "5. Listado de la situación de una tarjeta en particular\n\n";
+        print "1- Por estado de cuenta\n";
+        print "2. Por estado de tarjeta\n";
+        print "3. Por condición de distribución\n";
+        print "4. Por numero de cuenta\n";
+        print "5. Por numero de tarjeta\n\n";
 
         print "0. Volver al menu anterior\n\n";
 
@@ -207,186 +208,129 @@ while($opcionMenuPrincipal!=0) {
 
         if($opcion_listado == 1){
             while ($opcion_filtrado != 0){
+                print "Ingrese C seguido de uno o mas de ACT BAJA CTX JUD\n";
+                print "    separados por -\n";
+                print "Ingrese 0 para volver al menu anterior\n\n";
 
-                print "=== Ingrese los filtros de búsqueda:\n\n";
-
-                print "Formato para todos los registros: *\n";
-                print "Formato de filtro por entidad: exxx,exxx-xxx\n";
-                print "Formato de filtro por cuenta: cxxx...\n";
-                print "Formato de filtro por condicion de distribución: exxx,exxx-xxx\n";
-                print "Formato de filtro por estado de cuenta: Cxxx-xxx-xxx-...\n";
-                print "Formato de filtro por fuente: fxxxxxx\n";
-                print "Ingrese los filtros separados por coma: fitro1,filtro2\n";
-                print "0 - volver al menu anterior\n\n";
-
-                $stringJia = Filtros::validar();
-                if ($stringJia eq "0"){
+                # Obtener filtros, parsearlos, filtrar e imprimir
+                if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
-                }
-                if($stringJia ne "0"){
+                } else {
                     %filtros=();
-                    print "Los filtros son de $stringJia\n";
                     if ($stringJia ne "*") {
-
                         @arr_filtros = split(',', $stringJia);
+
+                        # Parsear filtros (separar "e013" en "e", y "013")
                         foreach my $x (@arr_filtros) {
                             $key = substr $x, 0, 1;
                             $value = substr $x, 1, ;
-                            print "clave:$key valor:$value\n";
                             $filtros{$key} = $value;
                         }
                     }
                     search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
-                    print  "# fin de proceso\n\n";
                 }
-
             }
         }
 
         if($opcion_listado == 2){
             while ($opcion_filtrado != 0){
+                print "Ingrese T seguido de uno o mas de\n";
+                print "    d, b, o v para denuncidada, bloqueada, o vencida\n";
+                print "    D, B, o V para su negacion\n";
+                print "Ingrese 0 para volver al menu anterior\n\n";
 
-                print "=== Ingrese los filtros de búsqueda:\n\n";
-                print "Formato para todos los registros: *\n";
-                print "Formato de filtro por entidad: exxx,exxx-xxx\n";
-                print "Formato de filtro por tarjeta: txxx...\n";
-                print "Formato de filtro por condicion de distribución: exxx,exxx-xxx\n";
-                print "Formato de filtro por estado de tarjeta: Txxx-xxx-xxx-...\n";
-                print "Formato de filtro por fuente: fxxxxxx\n";
-                print "Ingrese los filtros separados por coma: fitro1,filtro2\n";
-                print "0 - volver al menu anterior\n\n";
-
-                $stringJia = Filtros::validar();
-                if ($stringJia eq "0"){
+                # Obtener filtros, parsearlos, filtrar e imprimir
+                if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
-                }
-
-                if($stringJia ne "0"){
-
+                } else {
                     %filtros=();
-                    print "Los filtros son de $stringJia\n";
-                    if ($stringJia != "*") {
+                    if ($stringJia ne "*") {
                         @arr_filtros = split(',', $stringJia);
+
+                        # Parsear filtros (separar "e013" en "e", y "013")
                         foreach my $x (@arr_filtros) {
                             $key = substr $x, 0, 1;
                             $value = substr $x, 1, ;
                             $filtros{$key} = $value;
                         }
                     }
-
-                    search_by_filters(\%filters, \@files_input, "listado_tarjetas_");
-                    print  "# fin de proceso\n\n";
+                    search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
                 }
-
             }
         }
 
         if($opcion_listado == 3){
             while ($opcion_filtrado != 0){
+                print "Ingrese d seguido de uno de NO, URG, RETENER, o ESTANDAR\n";
+                print "Ingrese 0 para volver al menu anterior\n\n";
 
-                print "=== Ingrese los filtros de búsqueda:\n\n";
-                print "Formato para todos los registros: *\n";
-                print "Formato de filtro por condicion de distribución: dxxx\n";
-                print "Formato de filtro por estado de tarjeta: Txxx-xxx-xxx-...\n";
-                print "Formato de filtro por estado de cuenta: Cxxx-xxx-xxx-...\n\n";
-                print "Ingrese los filtros separados por coma: fitro1,filtro2\n";
-                print "0 - volver al menu anterior\n\n";
-
-                $stringJia = Filtros::validar();
-                if ($stringJia eq "0"){
+                # Obtener filtros, parsearlos, filtrar e imprimir
+                if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
-                }
-
-                if($stringJia ne "0"){
-
+                } else {
                     %filtros=();
-                    print "Los filtros son de $stringJia\n";
-                    if ($stringJia != "*") {
+                    if ($stringJia ne "*") {
                         @arr_filtros = split(',', $stringJia);
+
+                        # Parsear filtros (separar "e013" en "e", y "013")
                         foreach my $x (@arr_filtros) {
                             $key = substr $x, 0, 1;
                             $value = substr $x, 1, ;
                             $filtros{$key} = $value;
                         }
                     }
-
-                    search_by_filters(\%filters, \@files_input, "listado_condist_");
-                    print  "# fin de proceso\n\n";
+                    search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
                 }
-
             }
         }
 
         if($opcion_listado == 4){
-            print "=== Ingrese los filtros de búsqueda:\n\n";
-
-            print "Formato para todos los registros: *\n";
-            print "Formato de filtro por entidad: exxx,exxx-xxx\n";
-            print "Formato de filtro por cuenta: cxxx...\n\n";
-            print "Ingrese los filtros separados por coma: fitro1,filtro2\n";
-            print "0 - volver al menu anterior\n\n";
-
-            $stringJia = Filtros::validar();
-            if ($stringJia eq "0"){
-                $opcion_filtrado = 0;
-            }
-
-            if($stringJia ne "0"){
-
-                %filtros=();
-                print "Los filtros son de $stringJia\n";
-                if ($stringJia ne "*") {
-
-                    @arr_filtros = split(',', $stringJia);
-                    foreach my $x (@arr_filtros) {
-                        $key = substr $x, 0, 1;
-                        $value = substr $x, 1, ;
-                        $filtros{$key} = $value;
-                    }
-                }
-
-                search_by_filters(\%filtros, \@files_input,
-                        "listado_cuenta_particular_");
-                print  "# fin de proceso\n\n";
-            }
-        }
-
-        if($opcion_listado == 5){
-
             while ($opcion_filtrado != 0){
+                print "Ingrese c seguido del documento asociado a la cuenta\n";
+                print "Ingrese 0 para volver al menu anterior\n\n";
 
-                print "=== Ingrese los filtros de búsqueda:\n\n";
-
-                print "=== Ingrese los filtros de búsqueda:\n\n";
-                print "Formato para todos los registros: *\n";
-                print "Formato de filtro por tarjeta: txxx...\n\n";
-                print "Ingrese los filtros separados por coma: fitro1,filtro2\n";
-                print "0 - volver al menu anterior\n\n";
-
-                $stringJia = Filtros::validar();
-                if ($stringJia eq "0"){
+                # Obtener filtros, parsearlos, filtrar e imprimir
+                if ($stringJia eq "0") {
                     $opcion_filtrado = 0;
-                }
-
-                if($stringJia ne "0"){
-
+                } else {
                     %filtros=();
-                    print "Los filtros son de $stringJia\n";
                     if ($stringJia ne "*") {
-
                         @arr_filtros = split(',', $stringJia);
+
+                        # Parsear filtros (separar "e013" en "e", y "013")
                         foreach my $x (@arr_filtros) {
                             $key = substr $x, 0, 1;
                             $value = substr $x, 1, ;
                             $filtros{$key} = $value;
                         }
                     }
-
-                    search_by_filters(\%filtros, \@files_input,
-                            "listado_tarjeta_particular_");
-                    print  "# fin de proceso\n\n";
+                    search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
                 }
+            }
+        }
 
+        if($opcion_listado == 5){
+            while ($opcion_filtrado != 0){
+                print "Ingrese t seguido del documento asociado a la tarjeta\n";
+                print "Ingrese 0 para volver al menu anterior\n\n";
+
+                # Obtener filtros, parsearlos, filtrar e imprimir
+                if ($stringJia eq "0") {
+                    $opcion_filtrado = 0;
+                } else {
+                    %filtros=();
+                    if ($stringJia ne "*") {
+                        @arr_filtros = split(',', $stringJia);
+
+                        # Parsear filtros (separar "e013" en "e", y "013")
+                        foreach my $x (@arr_filtros) {
+                            $key = substr $x, 0, 1;
+                            $value = substr $x, 1, ;
+                            $filtros{$key} = $value;
+                        }
+                    }
+                    search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
+                }
             }
         }
     }
