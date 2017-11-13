@@ -236,7 +236,6 @@ while($opcionMenuPrincipal!=0) {
                             $filtros{$key} = $value;
                         }
                     }
-                    print "# inicio de proceso...\n\n";
                     search_by_filters(\%filtros, \@files_input, "listado_cuentas_");
                     print  "# fin de proceso\n\n";
                 }
@@ -275,7 +274,6 @@ while($opcionMenuPrincipal!=0) {
                         }
                     }
 
-                    print "# inicio de proceso...\n\n";
                     search_by_filters(\%filters, \@files_input, "listado_tarjetas_");
                     print  "# fin de proceso\n\n";
                 }
@@ -312,7 +310,6 @@ while($opcionMenuPrincipal!=0) {
                         }
                     }
 
-                    print "# inicio de proceso...\n\n";
                     search_by_filters(\%filters, \@files_input, "listado_condist_");
                     print  "# fin de proceso\n\n";
                 }
@@ -348,7 +345,6 @@ while($opcionMenuPrincipal!=0) {
                     }
                 }
 
-                print "# inicio de proceso...\n\n";
                 search_by_filters(\%filtros, \@files_input,
                         "listado_cuenta_particular_");
                 print  "# fin de proceso\n\n";
@@ -386,7 +382,6 @@ while($opcionMenuPrincipal!=0) {
                         }
                     }
 
-                    print "# inicio de proceso...\n\n";
                     search_by_filters(\%filtros, \@files_input,
                             "listado_tarjeta_particular_");
                     print  "# fin de proceso\n\n";
@@ -407,6 +402,7 @@ sub search_by_filters {
 
     my $cantidad = 0;
 
+    print "registros encontrados:\n";
     foreach $file (@files){
         open(ENTRADA, "$file") || die "ERROR no se pudo abrir el archivo";
 
@@ -464,7 +460,14 @@ sub search_by_filters {
             }
 
 
-            Tron::TRACE("registro correcto:$row");
+            Tron::TRACE("registro correcto:$row\n");
+
+            # Imprimir por pantalla el numero de cuenta
+            {
+                my @cosa = split(/;/, $row);
+                print "    ", $cosa[1], "\n";
+            }
+
             print $SALIDA $row;
 
             $cantidad++;
