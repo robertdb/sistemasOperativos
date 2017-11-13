@@ -350,6 +350,12 @@ sub search_by_filters {
 
     my $cantidad = 0;
 
+    # Creo archivo de salida
+    my $SEP = "_";
+    my $fecha_hora = "$year$mon$mday$hour$min$sec$SEP";
+    $file_output = "$DIR_REPORTES/$file_output_name$fecha_hora$secuence.txt";
+    open(my $SALIDA, '>', $file_output) or die "ERROR no se pudo abrir el archivo '$file_output' $!";
+
     print "registros encontrados:\n";
     foreach $file (@files){
         open(ENTRADA, "$file") || die "ERROR no se pudo abrir el archivo";
@@ -361,14 +367,6 @@ sub search_by_filters {
         ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime;
         $year += 1900;
         $mon++;
-
-        my $SEP = "_";
-        my $fecha_hora = "$year$mon$mday$hour$min$sec$SEP";
-
-        # archivo unico
-        $file_output = "$DIR_REPORTES/$file_output_name$fecha_hora$secuence.txt";
-        open(my $SALIDA, '>', $file_output) or die "ERROR no se pudo abrir el archivo '$file_output' $!";
-
 
         while ($row=<ENTRADA>) {
             Tron::TRACE("procesando linea: ", substr($row, 0, 50));
@@ -422,8 +420,9 @@ sub search_by_filters {
         }
 
         close(ENTRADA);
-        close($SALIDA);
         print "archivo procesado: $file\n";
         print "cantidad de registros procesados: $cantidad\n\n";
     }
+
+    close($SALIDA);
 }
