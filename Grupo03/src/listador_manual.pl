@@ -423,7 +423,7 @@ sub search_by_filters {
 
         # archivo unico
         $file_output = "$DIR_REPORTES/$file_output_name$fecha_hora$secuence.txt";
-        open(SALIDA, '>', $file_output) or die "ERROR no se pudo abrir el archivo '$file_output' $!";
+        open(my $SALIDA, '>', $file_output) or die "ERROR no se pudo abrir el archivo '$file_output' $!";
 
 
         while ($row=<ENTRADA>) {
@@ -465,13 +465,13 @@ sub search_by_filters {
 
 
             Tron::TRACE("registro correcto:$row");
-            print SALIDA $row;
+            print $SALIDA $row;
 
             $cantidad++;
         }
 
         close(ENTRADA);
-        close(SALIDA);
+        close($SALIDA);
         print "archivo procesado: $file\n";
         print "cantidad de registros procesados: $cantidad\n\n";
     }
