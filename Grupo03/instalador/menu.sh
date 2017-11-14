@@ -70,7 +70,7 @@ nombrarDirectorio(){
      read -p $"Defina el nuevo directorio de $1: $GRUPO/" -ei "" directorioNuevo
      echo $directorioNuevo >> "$GRUPO/dirconf/salidaTerminal.log"
      log "-$usuario-Instalador-INF-Informe nuevo directorio para $1"
-     validar "$GRUPO/$directorioNuevo" $directorioNuevo $lugar
+     validar "$GRUPO/$directorioNuevo" "$directorioNuevo" "$lugar"
 # le paso a ret lo que retorna la funcion validar
      ret=$?
 #     if [ "$ret" = "1" ]; then

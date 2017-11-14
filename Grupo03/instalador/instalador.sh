@@ -96,18 +96,26 @@ desinstalar(){
   do
 #   echo "$line"
 #   carpetas[$contador]="$line"
-    if [ -d "$line" ]; then
-    mensaje "borrar carpeta $line"
+#    if [ -d "$line" ]; then
+#    mensaje "borrar carpeta $line"
 #lo creo
-       log "-$usuario-Instalador-INF-Reparacion de carpeta $line"
-    rm -f -r "$line"
-     fi
+#       log "-$usuario-Instalador-INF-Reparacion de carpeta $line"
+#    rm -f -r "$line"
+#     fi
 #   contador+=1
+    while [ "$line" != "$GRUPO" ]
+     do
+      mensaje "borrar carpeta $line"
+      rm -f -r "$line"
+      log "-$usuario-Instalador-INF-Borrado de carpeta $line"
+      line=$"${line%/*}"
+     done
   done <<<"$carpetasABorrar"
  mensaje "Borrar todo los logs de dirconf"
  log "-$usuario-Instalador-INF-Borrar logs de dirconf"
- rm "$GRUPO/dirconf/"*
  mensaje "Desinstalacion finalizada"
+ rm "$GRUPO/dirconf/"*
+
  else
    mensaje "No hay instalacion previa, no desinstala"
  fi
