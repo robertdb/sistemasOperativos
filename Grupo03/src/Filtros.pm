@@ -198,11 +198,10 @@ sub filtrarTarjetas {
 #   vencida = [ "v" | "V" ]
 sub filtrarEstadoDeTarjeta {
     my @reg = split(/;/, shift @_);
-    my @estado = @reg[3..5];
 
     my %filtros = %{shift @_};
 
-    Tron::TRACE("filtrando por estado de tarjeta ", @estado);
+    Tron::TRACE("filtrando por estado de tarjeta");
 
     if (! exists $filtros{"T"}) {
         Tron::TRACE("registro aceptado: no hay filtro");
@@ -210,14 +209,22 @@ sub filtrarEstadoDeTarjeta {
         return 1;
     }
 
-    my $v = @estado[0];
-    my $d = @estado[1];
-    my $b = @estado[2];
+    # Extraigo el estado actual
+    my $d = @reg[4];
+    my $b = @reg[5];
 
+    # Decido si la tarjeta esta vencida
+    my $fecha = @reg[16];
+    $fecha =~ s/(\d*).(\d*).(\d*)/$3$2$1/;
+    Tron::TRACE("fecha: ", $fecha);
+    my $v = ($fecha le 20171114);
+
+    # Defino estado esperado como "cualquiera"
     my $xv = "*";
     my $xd = "*";
     my $xb = "*";
 
+    # Extraigo estado esperado del filtro
     my $filtro = $filtros{"T"};
     my $temp;
     while ( ($temp = chop($filtro)) ne "" ) {
