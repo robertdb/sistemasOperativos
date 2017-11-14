@@ -35,7 +35,7 @@ reparar(){
     mensaje "reparacion de carpeta $line"
 #lo creo
        log "-$usuario-Instalador-INF-Reparacion de carpeta $line"
-    mkdir "$line"
+    mkdir -p "$line"
      fi
    contador+=1
   done <<<"$carpetasACrear"
