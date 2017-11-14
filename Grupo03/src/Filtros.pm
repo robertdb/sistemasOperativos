@@ -237,17 +237,18 @@ sub filtrarEstadoDeTarjeta {
     }
     Tron::TRACE("filtro: ", $xv, $xd, $xb);
 
-    if ($xv != "*" and $xv ne $v) {
+    # Compruebo que el estado actual sea igual al estado esperado
+    if ( ($xv ne "*") and ($xv != $v) ) {
         Tron::TRACE("registro rechazado: vencimiento");
         Tron::TRACE();
         return 0;
     }
-    if ($xd != "*" and $xd ne $d) {
+    if ( ($xd ne "*") and ($xd != $d) ) {
         Tron::TRACE("registro rechazado: denuncia");
         Tron::TRACE();
         return 0;
     }
-    if ($xb != "*" and $xb ne $b) {
+    if ( ($xb ne "*") and ($xb != $b) ) {
         Tron::TRACE("registro rechazado: bloqueo");
         Tron::TRACE();
         return 0;
