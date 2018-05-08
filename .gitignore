@@ -1,6 +1,0 @@
-*.log
-*.conf
-*.txt
-
-# Archivos swap de Vim
-*.swp
